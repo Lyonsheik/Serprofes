@@ -1,33 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarjetas Premium Flexbox</title>
+    <title>Planes de Suscripción</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
 
-    <header style="text-align: center; margin-top: 20px;">
-        <h2>Nuestros planes de IA</h2>
-    </header>
+    <section class="pricing-container">
+        <div class="header">
+            <h2>Nuestros Planes de IA</h2>
+            <p>Elige la opción que mejor se adapte a tus necesidades de formación.</p>
+        </div>
 
-    <main class="contenedor-tarjetas">
-        <article class="Tarjetas">
-            <h3>Plan Básico</h3>
-            <p class="precio">Gratis</p>
-            <p>Ideal para probar nuestra guía con 50 mensajes al día</p>
-            <button>Elegir Plan</button>
-        </article>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Gratis</h3>
+                <div class="price">0€<span>/mes</span></div>
+                <ul>
+                    <li>Acceso a webinars públicos</li>
+                    <li>Foro de la comunidad</li>
+                    <li>Documentación básica</li>
+                </ul>
+                <a href="#" class="btn btn-outline">Empezar ahora</a>
+            </div>
 
-        <article class="Tarjetas">
-            <h3>Plan Pro</h3>
-            <p class="precio">15 / mes</p>
-            <p>Mensajes ilimitados y respuestas rápidas</p>
-            <button class="btn-destacado">Elegir Plan Pro</button>
-        </article>
-    </main>
-    
+            <div class="price-card">
+                <h3>Básico</h3>
+                <div class="price">19€<span>/mes</span></div>
+                <ul>
+                    <li>Todo lo del plan Gratis</li>
+                    <li>Certificados de asistencia</li>
+                    <li>Soporte vía email</li>
+                </ul>
+                <a href="#" class="btn btn-outline">Elegir Básico</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="badge">Recomendado</div>
+                <h3>Premium</h3>
+                <div class="price">49€<span>/mes</span></div>
+                <ul>
+                    <li>Todo lo del plan Básico</li>
+                    <li>Acceso a todos los cursos</li>
+                    <li>Clases en vivo semanales</li>
+                    <li>Revisiones de portafolio</li>
+                </ul>
+                <a href="#" class="btn btn-solid">Elegir Premium</a>
+            </div>
+
+            <div class="price-card">
+                <h3>Pro</h3>
+                <div class="price">99€<span>/mes</span></div>
+                <ul>
+                    <li>Todo lo del plan Premium</li>
+                    <li>Mentoría 1 a 1</li>
+                    <li>Licencias de software BIM</li>
+                    <li>Bolsa de empleo exclusiva</li>
+                </ul>
+                <a href="#" class="btn btn-outline">Elegir Pro</a>
+            </div>
+        </div>
+    </section>
+
 </body>
 </html>
