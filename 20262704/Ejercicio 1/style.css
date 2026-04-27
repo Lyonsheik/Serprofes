@@ -1,0 +1,64 @@
+/* Configuración general*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+* {
+list-style: none; /*Borra viñeta*/
+}
+
+a {
+    text-decoration: none; /*Elimina el subrayado de los enlaces*/
+    color:black /*Cambia de color los enlaces*/
+}
+
+/* LA magia de CSS Grid Body*/
+body {
+    height: 100vh; /* Ocupa toda la pantalla*/
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /*1. Activamos Grid*/
+    display: grid;
+    /*2. Definimos las columnas
+    nav de 250px y el main el resto 1fr*/
+    grid-template-columns: 250px 1fr;
+
+    /*3. Definimos las filas (Header 60px, Main Flexible 1fr, footer 60px)*/
+    grid-template-rows: 60px 1fr 60px;
+     /* Dibujamos el mapa TETRIS*/
+    grid-template-areas:
+    "header header"
+    "nav main"
+    "footer footer"
+    ;
+
+}
+
+/* Asignamos cada caja a su zona del mapa*/
+
+header {
+    grid-area: header; /* LE decimos que vaya a la zona header*/
+    background-color: blue;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    justify-content: center;
+}
+
+nav {
+    grid-area: main;
+    background-color: rgb(150, 133, 133);
+    padding: 30px;
+}
+
+footer {
+    grid-area: footer;
+    background-color: blueviolet;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
