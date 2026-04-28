@@ -318,3 +318,16 @@ header p {
     #btn-entrar { width: 80%; font-size: 1.1rem; }
     .cerrar { top: 10px; right: 20px; font-size: 40px; }
 }
+
+.btn-especial {
+    border-color: #c5b358 !important;
+    color: #c5b358;
+    font-weight: bold;
+    margin-bottom: 30px !important; /* Separación extra de los pintores */
+}
+
+.btn-especial:hover {
+    background: #c5b358 !important;
+    color: #121212 !important;
+    box-shadow: 0 0 20px rgba(197, 179, 88, 0.4);
+}

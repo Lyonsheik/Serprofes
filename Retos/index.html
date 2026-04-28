@@ -21,6 +21,7 @@
         <h2>MAESTROS</h2>
         <div class="linea-decorativa"></div>
         <ul>
+            <li onclick="volverAlInicio()" class="btn-especial">INICIO</li>
             <li onclick="cambiarPintor('goya')">Francisco de Goya</li>
             <li onclick="cambiarPintor('greco')">El Greco</li>
             <li onclick="cambiarPintor('velazquez')">Diego Velázquez</li>
@@ -118,6 +119,23 @@
         function cerrarZoom() {
             document.getElementById("modal-zoom").style.display = "none";
         }
+
+        function volverAlInicio() {
+    const overlay = document.getElementById('overlay-inicio');
+    const musica = document.getElementById('musica-museo');
+
+    // 1. Volvemos a mostrar el overlay con las estatuas
+    overlay.style.display = 'flex';
+    
+    // Pequeño timeout para que la transición de opacidad funcione
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 10);
+
+    // 2. Opcional: Reiniciar la música al volver
+    // musica.pause(); 
+    // musica.currentTime = 0;
+}
     </script>
 </body>
 </html>
