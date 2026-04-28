@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museo de Grandes Maestros</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <audio id="musica-museo" loop>
+        <source src="Vals-Chopin-Prelude-70.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="overlay-inicio">
+        <button id="btn-entrar" onclick="iniciarMuseo()">Ingresar al Museo</button>
+    </div>
+
+    <nav class="nav-izquierda">
+        <h2>MAESTROS</h2>
+        <div class="linea-decorativa"></div>
+        <ul>
+            <li onclick="cambiarPintor('goya')">Francisco de Goya</li>
+            <li onclick="cambiarPintor('greco')">El Greco</li>
+            <li onclick="cambiarPintor('velazquez')">Diego Velázquez</li>
+            <li onclick="cambiarPintor('rubens')">Peter Paul Rubens</li>
+        </ul>
+    </nav>
+
+    <div class="contenedor-principal">
+        <header>
+            <h1 id="nombre-pintor">EL Museo</h1>
+            <p>FRAGMENTOS DEL TIEMPO TALLADOS EN PIEDRA</p>
+        </header>
+        <main class="galeria" id="galeria-central"></main>
+    </div>
+
+    <div id="modal-zoom" class="modal">
+        <span class="cerrar" onclick="cerrarZoom()">&times;</span>
+        <div class="modal-contenedor-interno">
+            <img class="modal-contenido" id="img-zoom">
+            <div id="caption"></div>
+            <div id="descripcion-obra"></div>
+        </div>
+    </div>
+
+    <script>
+        const obras = {
+            goya: [
+                { src: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Maja_vestida_%28Prado%29.jpg', titulo: 'La Maja Vestida', desc: 'Retrato de una mujer misteriosa con atuendo tradicional español, famosa por su pincelada suelta.' },
+                { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg/960px-Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg', titulo: 'Saturno devorando a su hijo', desc: 'Una de las Pinturas Negras de Goya, que representa el paso del tiempo y la autodestrucción.' },
+                { src: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/El_Quitasol_%28Goya%29.jpg', titulo: 'El quitasol', desc: 'Un cartón para tapiz que muestra la maestría de Goya en el manejo de la luz y el color galante.' }
+            ],
+            greco: [
+                { src: 'https://content3.cdnprado.net/imagenes/Documentos/imgsem/9c/9cb7/9cb73bdf-66e8-4826-a79c-5de2b15a1da6/bf8475d4-1066-4fda-b2a9-1dd3e39e5ced_832.jpg', titulo: 'El caballero de la mano en el pecho', desc: 'Símbolo del honor español, destaca por la expresión intensa y el realismo de la mano.' },
+                { src: 'https://evocarte.com/wp-content/uploads/2020/11/entierro-conde-de-orgaz.jpg', titulo: 'El entierro del Conde de Orgaz', desc: 'Obra cumbre que une lo terrenal con lo celestial en una composición monumental.' },
+                { src: 'https://xlart.com/1576-thickbox_default/l.jpg', titulo: 'La Anunciación', desc: 'Muestra el estilo maduro del Greco, con figuras alargadas y colores espirituales.' }
+            ],
+            velazquez: [
+                { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Las_Meninas_01.jpg/1280px-Las_Meninas_01.jpg', titulo: 'Las Meninas', desc: 'Una compleja obra maestra de la perspectiva y la psicología en la corte española.' },
+                { src: 'https://www.despertaferro-ediciones.com/wp-content/uploads/2025/06/Rendicion.jpg', titulo: 'La rendición de Breda', desc: 'También conocida como Las Lanzas, celebra la clemencia y la dignidad en la guerra.' },
+                { src: 'https://www.tuposter.com/pub/media/catalog/product/cache/71d04d62b2100522587d43c930e8a36b/v/e/velazquez_la_fragua_de_vulcano_poster.png', titulo: 'La fragua de Vulcano', desc: 'El momento en que Apolo informa a Vulcano de la infidelidad de Venus, capturado con gran realismo.' }
+            ],
+            rubens: [
+                { src: 'https://www.meisterdrucke.es/kunstwerke/1260px/Peter%20Paul%20Rubens%20-%20The%20Three%20Graces%20-%20%28MeisterDrucke-19101%29.jpg', titulo: 'Las tres Gracias', desc: 'Representación de la belleza, el amor y la fertilidad con el dinamismo típico de Rubens.' },
+                { src: 'https://www.salaretiro.com/img/001/39060/001-39060-23.jpg?a=1714911741', titulo: 'El rapto de las hijas de Leucipo', desc: 'Una explosión de movimiento y color barroco que narra un mito clásico.' },
+                { src: 'https://pbs.twimg.com/media/HG0QHrTbkAA226q.jpg', titulo: 'El juicio de Paris', desc: 'La mítica elección entre las diosas, donde Rubens despliega toda su maestría cromática.' }
+            ]
+        };
+
+        function iniciarMuseo() {
+            const overlay = document.getElementById('overlay-inicio');
+            const musica = document.getElementById('musica-museo');
+            musica.volume = 0.2;
+            musica.play().catch(e => console.log("Audio esperando interacción"));
+
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                cambiarPintor('goya');
+            }, 600);
+        }
+
+        function cambiarPintor(pintor) {
+            const galeria = document.getElementById('galeria-central');
+            const titulo = document.getElementById('nombre-pintor');
+            titulo.innerText = pintor.toUpperCase();
+            galeria.innerHTML = '';
+
+            obras[pintor].forEach(obra => {
+                const card = document.createElement('div');
+                card.className = 'piedra-card';
+                card.innerHTML = `
+                    <div class="marco"><img src="${obra.src}"></div>
+                    <div class="info"><h3>${obra.titulo}</h3></div>
+                `;
+                card.onclick = () => abrirZoom(obra.src, obra.titulo, obra.desc);
+                
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / card.clientWidth) * 100;
+                    const y = ((e.clientY - rect.top) / card.clientHeight) * 100;
+                    card.style.setProperty('--x', `${x}%`);
+                    card.style.setProperty('--y', `${y}%`);
+                });
+                galeria.appendChild(card);
+            });
+        }
+
+        function abrirZoom(src, titulo, descripcion) {
+            document.getElementById("modal-zoom").style.display = "flex";
+            document.getElementById("img-zoom").src = src;
+            document.getElementById("caption").innerText = titulo;
+            document.getElementById("descripcion-obra").innerText = descripcion;
+        }
+
+        function cerrarZoom() {
+            document.getElementById("modal-zoom").style.display = "none";
+        }
+    </script>
+</body>
+</html>
