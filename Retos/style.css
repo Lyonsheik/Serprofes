@@ -54,8 +54,8 @@ button,
 /* BOTÓN INVISIBLE SOBRE EL TEXTO DE LA IMAGEN */
 #btn-entrar {
     /* Ajusta este tamaño para que cubra exactamente el texto en la imagen */
-    width: 1700px;  /* Ancho aproximado del texto */
-    height: 160px;  /* Alto aproximado del texto */
+    width: 900px;  /* Ancho aproximado del texto */
+    height: 110px;  /* Alto aproximado del texto */
     
     /* TOTALMENTE INVISIBLE */
     background: transparent;
