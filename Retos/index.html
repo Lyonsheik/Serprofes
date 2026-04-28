@@ -26,13 +26,14 @@
             <li onclick="cambiarPintor('greco')">El Greco</li>
             <li onclick="cambiarPintor('velazquez')">Diego Velázquez</li>
             <li onclick="cambiarPintor('rubens')">Peter Paul Rubens</li>
+            <li onclick="mostrarObrasCompletas()" class="btn-obras-completas">OBRAS COMPLETAS</li>
         </ul>
     </nav>
 
     <div class="contenedor-principal">
         <header>
             <h1 id="nombre-pintor">EL Museo</h1>
-            <p>FRAGMENTOS DEL TIEMPO TALLADOS EN PIEDRA</p>
+            <p id="subtitulo-header">FRAGMENTOS DEL TIEMPO TALLADOS EN PIEDRA</p>
         </header>
         <main class="galeria" id="galeria-central"></main>
     </div>
@@ -86,7 +87,11 @@
         function cambiarPintor(pintor) {
             const galeria = document.getElementById('galeria-central');
             const titulo = document.getElementById('nombre-pintor');
+            const subtitulo = document.getElementById('subtitulo-header');
+            
             titulo.innerText = pintor.toUpperCase();
+            subtitulo.innerText = "FRAGMENTOS DEL TIEMPO TALLADOS EN PIEDRA";
+            galeria.className = "galeria"; // Resetear grid
             galeria.innerHTML = '';
 
             obras[pintor].forEach(obra => {
@@ -109,6 +114,22 @@
             });
         }
 
+        function mostrarObrasCompletas() {
+            const galeria = document.getElementById('galeria-central');
+            const titulo = document.getElementById('nombre-pintor');
+            const subtitulo = document.getElementById('subtitulo-header');
+
+            titulo.innerText = "COLECCIÓN COMPLETA";
+            subtitulo.innerText = "EL CATÁLOGO MAESTRO";
+            
+            galeria.innerHTML = `
+                <div class="contenedor-poster">
+                    <img src="obras-completas.png" alt="Catálogo completo de obras" class="imagen-poster" onclick="abrirZoom('obras-completas.png', 'Colección Completa', 'Vista general de todos los maestros del museo.')">
+                </div>
+            `;
+            galeria.className = "galeria-unica"; // Clase especial para centrar la imagen
+        }
+
         function abrirZoom(src, titulo, descripcion) {
             document.getElementById("modal-zoom").style.display = "flex";
             document.getElementById("img-zoom").src = src;
@@ -121,21 +142,10 @@
         }
 
         function volverAlInicio() {
-    const overlay = document.getElementById('overlay-inicio');
-    const musica = document.getElementById('musica-museo');
-
-    // 1. Volvemos a mostrar el overlay con las estatuas
-    overlay.style.display = 'flex';
-    
-    // Pequeño timeout para que la transición de opacidad funcione
-    setTimeout(() => {
-        overlay.style.opacity = '1';
-    }, 10);
-
-    // 2. Opcional: Reiniciar la música al volver
-    // musica.pause(); 
-    // musica.currentTime = 0;
-}
+            const overlay = document.getElementById('overlay-inicio');
+            overlay.style.display = 'flex';
+            setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+        }
     </script>
 </body>
 </html>

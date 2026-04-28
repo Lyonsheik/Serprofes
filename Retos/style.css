@@ -331,3 +331,56 @@ header p {
     color: #121212 !important;
     box-shadow: 0 0 20px rgba(197, 179, 88, 0.4);
 }
+
+/* =========================================
+   8. ESTILOS OBRAS COMPLETAS
+   ========================================= */
+
+.btn-obras-completas {
+    margin-top: 30px !important;
+    background: #2a2a2a !important;
+    border: 1px dashed #8a7a50 !important;
+    color: #e0d8c0 !important;
+}
+
+.btn-obras-completas:hover {
+    border-style: solid !important;
+    border-color: #fff !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.galeria-unica {
+    display: flex;
+    justify-content: center;
+    padding: 20px 60px;
+}
+
+.contenedor-poster {
+    max-width: 1000px;
+    padding: 20px;
+    background: #1a1a1a;
+    border: 10px double #c5b358;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    transition: transform 0.5s ease;
+}
+
+.contenedor-poster:hover {
+    transform: scale(1.02);
+}
+
+.imagen-poster {
+    width: 100%;
+    display: block;
+    filter: sepia(0.1) contrast(1.1);
+    cursor: zoom-in !important;
+}
+
+/* Ajuste responsivo para el poster */
+@media (max-width: 768px) {
+    .galeria-unica {
+        padding: 10px;
+    }
+    .contenedor-poster {
+        border-width: 5px;
+    }
+}
