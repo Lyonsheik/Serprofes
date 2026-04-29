@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect With Us - Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<script>
+    const form = document.querySelector('form');
+    const btn = document.querySelector('.btn-enviar');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        btn.innerHTML = 'Enviando...';
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+
+        // Simulación de envío
+        setTimeout(() => {
+            btn.innerHTML = '¡Mensaje Enviado! ✓';
+            btn.style.background = '#2ecc71';
+            form.reset();
+        }, 2000);
+    });
+</script>
+<body>
+    <div class="form-container">
+        <h2>Connect With Us</h2>
+        <p>¿Hablamos de tu próximo proyecto con IA?</p>
+        <form>
+            <div class="input-group">
+                <label>Nombre</label>
+                <input type="text" placeholder="Ej. Jorge">
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" placeholder="hola@ia.com">
+            </div>
+            <button type="submit" class="btn-enviar">Enviar Mensaje</button>
+        </form>
+    </div>
+</body>
+</html>
