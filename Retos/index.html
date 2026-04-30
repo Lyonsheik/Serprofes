@@ -22,6 +22,10 @@
         <div class="linea-decorativa"></div>
         <ul>
             <li onclick="volverAlInicio()" class="btn-especial">INICIO</li>
+            <li onclick="cambiarPintor('Lewis')">Lewis D. Sanchez</li>
+            <li onclick="cambiarPintor('Picasso')">Pablo Picasso</li>
+            <li onclick="cambiarPintor('Da Vinci')">Leonardo Da Vinci</li>
+            <li onclick="cambiarPintor('Van Gogh')">Vincent Van Gogh</li>
             <li onclick="cambiarPintor('goya')">Francisco de Goya</li>
             <li onclick="cambiarPintor('greco')">El Greco</li>
             <li onclick="cambiarPintor('velazquez')">Diego Velázquez</li>
@@ -49,6 +53,34 @@
 
     <script>
        const obras = {
+            Lewis: [
+                { src: "foto-perfil.png", titulo: "Lyon Sheik - Autoretrato en Óleo", desc: "¡Sí, soy yo!, el diseñador y desarrollador web de este museo, mi pseudónimo LyonSheik en GitHub, un tanto extrovertido con no solo habilidades en web, sino en soporte técnico, además de la música en distintos instrumentos, suelo optar por la tranquilidad, la admiración por la belleza de la naturaleza y por último y no menos importante, mi creencia y Fé sostenible en Dios"},
+                ],
+
+            Picasso: [
+                { src: "https://i.etsystatic.com/43528191/r/il/d8d3fa/5993298089/il_1080xN.5993298089_9n6m.jpg", titulo: "Guernica", desc: "Un grito contra la barbarie de la guerra." },
+            { src: "https://artecrehaes.wordpress.com/wp-content/uploads/2020/12/sin-titulo_29-4.jpg?w=478", titulo: "Las señoritas de Avignon", desc: "Obra fundacional del cubismo." },
+            { src: "https://d33y0z4ooepzrm.cloudfront.net/images/094c79d13389a4f7f75c70021368851854d06eef/fullscreen/094c79d13389a4f7f75c70021368851854d06eef.jpg", titulo: "El viejo guitarrista ciego", desc: "Periodo azul de Picasso." },
+            { src: "https://i.etsystatic.com/22379379/r/il/d3e7b6/5257056986/il_570xN.5257056986_oiie.jpg", titulo: "Muchacha ante el espejo", desc: "Exploración de la identidad." },
+            { src: "https://tuiteartees.wordpress.com/wp-content/uploads/2013/06/20130608-los-tres-musicos1.jpg?w=1400", titulo: "Los tres músicos", desc: "Cubismo sintético." },
+                ],
+
+             "Da Vinci": [
+                { src: "https://content-historia.nationalgeographic.com.es/medio/2021/03/05/01-mona-lisa-marco-gioconda-louvre_92a4d4c2_1280x1691.jpg", titulo: "La Gioconda", desc: "La obra más famosa del mundo." },
+            { src: "https://www.articulosreligiososbrabander.es/uploads/media/images/1200x900/tapiz-ultima-cena-leonardo-da-vinci1.jpg", titulo: "La última cena", desc: "Momento de la revelación de la traición." },
+            { src: "https://thumbs.dreamstime.com/b/hombre-de-vitruvian-7695298.jpg", titulo: "El hombre de Vitruvio", desc: "Canon de las proporciones humanas." },
+            { src: "https://media.gq.com.mx/photos/5ca37ca2cc326b169cb50f35/master/pass/https---hypebeast.com-image-2019-04-leonardo-da-vinci-salvator-mundi-painting-disappears-1.jpg", titulo: "Salvator Mundi", desc: "Cristo como salvador del mundo." },
+            { src: "https://www.cronicasdemilan.com/wp-content/uploads/2022/12/dama-con-armin%CC%83o-2x3-1-683x1024.jpeg", titulo: "La dama del armiño", desc: "Retrato de Cecilia Gallerani." },
+                ],
+
+            "Van Gogh": [
+                { src: "https://media.biobiochile.cl/wp-content/uploads/2024/09/la-noche-estrellada-750x400.jpg", titulo: "La noche estrellada", desc: "Obra maestra del postimpresionismo." },
+            { src: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Vincent_van_Gogh_-_The_Church_in_Auvers-sur-Oise%2C_View_from_the_Chevet_-_Google_Art_Project.jpg", titulo: "La iglesia de Auvers", desc: "Líneas que vibran con emoción." },
+            { src: "https://i.etsystatic.com/5307484/r/il/2f3808/2003633453/il_fullxfull.2003633453_9bzg.jpg", titulo: "Terraza de café por la noche", desc: "Uso magistral del contraste cromático." },
+            { src: "https://upload.wikimedia.org/wikipedia/commons/b/b2/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project.jpg", titulo: "Autorretrato", desc: "Reflejo de la intensidad psicológica del autor." },
+            { src: "https://content-historia.nationalgeographic.com.es/medio/2024/10/04/una-version-todavia-mas-amarilla_fb355a57_18_241004135240_1572x1926.webp", titulo: "Los Girasoles", desc: "Exploración del color amarillo." },
+
+            ],
             goya: [
                 { src: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Maja_vestida_%28Prado%29.jpg', titulo: 'La Maja Vestida', desc: 'Retrato de una mujer misteriosa con atuendo tradicional español, famosa por su pincelada suelta.' },
                 { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg/960px-Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg', titulo: 'Saturno devorando a su hijo', desc: 'Una de las Pinturas Negras de Goya, que representa el paso del tiempo y la autodestrucción.' },
@@ -133,12 +165,17 @@
             subtitulo.innerText = "EL CATÁLOGO MAESTRO";
             
             galeria.innerHTML = `
-                <div class="contenedor-poster">
-                    <img src="obras-completas2.png" alt="Catálogo completo de obras" class="imagen-poster" onclick="abrirZoom('obras-completas2.png', 'Colección Completa', 'Vista general de todos los maestros del museo.')">
-                </div>
-            `;
-            galeria.className = "galeria-unica"; // Clase especial para centrar la imagen
-        }
+                <div class="contenedor-galeria-completas">
+            <div class="contenedor-poster">
+                <img src="obras-completas2.png" alt="Parte 1" class="imagen-poster" onclick="abrirZoom('obras-completas2.png', 'Colección Parte I', 'Maestros Modernos')">
+            </div>
+            <div class="contenedor-poster">
+                <img src="obras-completas3.png" alt="Parte 2" class="imagen-poster" onclick="abrirZoom('obras-completas3.png', 'Colección Parte II', 'Maestros Clásicos')">
+            </div>
+        </div>
+    `;
+    galeria.className = "galeria-unica"; 
+}
 
         function abrirZoom(src, titulo, descripcion) {
             document.getElementById("modal-zoom").style.display = "flex";

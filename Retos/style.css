@@ -770,3 +770,31 @@ header p {
 
 }
 
+/* Contenedor para alinear los dos posters */
+.contenedor-galeria-completas {
+    display: flex;
+    flex-wrap: wrap;     /* Permite que bajen si no caben */
+    justify-content: center;
+    gap: 50px;           /* El espacio exacto entre los dos posters */
+    padding: 20px;
+    width: 100%;
+}
+
+/* Ajuste del tamaño para que quepan dos en pantalla */
+.contenedor-galeria-completas .contenedor-poster {
+    flex: 1;
+    min-width: 450px;    /* Evita que se hagan demasiado pequeños */
+    max-width: 800px;    /* Controla el tamaño máximo de cada poster */
+}
+
+/* Ajuste para dispositivos móviles */
+@media (max-width: 1100px) {
+    .contenedor-galeria-completas {
+        flex-direction: column; /* Se ponen uno debajo del otro */
+        align-items: center;
+    }
+    
+    .contenedor-galeria-completas .contenedor-poster {
+        min-width: 90%;
+    }
+}
