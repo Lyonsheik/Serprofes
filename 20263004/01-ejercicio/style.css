@@ -503,3 +503,295 @@ nav {
         display: none; /* Ocultamos sidebar en tablets/móviles para priorizar el feed */
     }
 }
+
+/* VENTANA DE CHAT FLOTANTE */
+.chat-window {
+    position: fixed;
+    bottom: 20px;
+    right: 300px; /* Al lado de la sidebar */
+    width: 320px;
+    height: 400px;
+    background: #fff;
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+    display: none; /* Se activa por JS */
+    flex-direction: column;
+    z-index: 2000;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.chat-header {
+    background: linear-gradient(90deg, #c639b8, #e91e63);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.chat-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Burbujas de Chat */
+.msg {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.msg-me {
+    align-self: flex-end;
+    background: #c639b8;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.msg-them {
+    align-self: flex-start;
+    background: #e4e6eb;
+    color: #333;
+    border-bottom-left-radius: 2px;
+}
+
+.chat-input-area {
+    padding: 10px;
+    display: flex;
+    gap: 5px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input-area input {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 20px;
+    outline: none;
+}
+
+.chat-input-area button {
+    background: #c639b8;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* NAVEGACIÓN INTERNA DEL MURO (TABS) */
+.feed-header-nav {
+    display: flex;
+    justify-content: space-around;
+    background: #fff;
+    padding: 15px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 90px;
+    z-index: 100;
+}
+
+.tab-item {
+    cursor: pointer;
+    font-weight: 600;
+    color: #888;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.tab-item i { font-size: 1.2rem; }
+.tab-item.active { color: #c639b8; }
+.tab-item.active::after {
+    content: '';
+    width: 20px;
+    height: 3px;
+    background: #c639b8;
+    border-radius: 10px;
+}
+
+/* BUSCADOR DE AMIGOS */
+.search-box {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #eee;
+    background: #f9f9f9;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+/* PERFIL DINÁMICO */
+.profile-header {
+    text-align: center;
+    padding: 30px;
+    background: #fff;
+    border-radius: 20px;
+}
+
+.profile-pic-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #f0f2f5;
+}
+
+.edit-pic-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #c639b8;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+/* --- CORRECCIONES CRÍTICAS DE VISIBILIDAD --- */
+
+/* Asegurar que las pestañas se vean en modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .feed-header-nav, .profile-header, .create-post-card, .post-card {
+        background: #1a1a1a !important;
+        border: 1px solid #333;
+    }
+    .tab-item { color: #aaa; }
+    .post-content, .profile-header h2 { color: #eee; }
+    .search-box { background: #252525; border-color: #444; color: #fff; }
+    .chat-window { background: #1a1a1a; }
+    .chat-messages { background: #111; }
+    .msg-them { background: #333; color: #eee; }
+}
+
+/* Ajuste del Chat para Móviles */
+@media (max-width: 900px) {
+    .chat-window {
+        right: 10px;
+        width: calc(100% - 20px);
+        bottom: 0;
+        height: 60vh;
+    }
+}
+
+/* --- ESTILOS DE LA PESTAÑA AMIGOS --- */
+#friendsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.friend-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+@media (prefers-color-scheme: dark) {
+    .friend-card { background: #1a1a1a; border: 1px solid #333; }
+}
+
+.friend-card:hover { transform: translateY(-5px); }
+
+.friend-card .user-avatar {
+    margin: 0 auto 10px;
+}
+
+/* --- REELS (DISEÑO DINÁMICO) --- */
+.reels-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.reel-video-placeholder {
+    width: 100%;
+    max-width: 350px;
+    height: 550px;
+    background: #000;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.reel-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+/* --- FIX DE MODALES --- */
+#recoveryModal {
+    z-index: 3000; /* Por encima de todo */
+}
+
+#recoveryModal .modal-box {
+    border: 2px solid #c639b8;
+}
+/* Efecto de movimiento en la imagen de la chica */
+.hero-img img {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hero-img:hover img {
+    transform: scale(1.05) translateY(-10px) rotate(2deg);
+}
+
+/* Efecto Hover en los iconos de las pestañas */
+.tab-item i {
+    transition: all 0.3s ease;
+}
+
+.tab-item:hover i {
+    color: #c639b8;
+    transform: translateY(-3px) scale(1.2);
+    text-shadow: 0 0 10px rgba(198, 57, 184, 0.5);
+}
+
+/* Asegurar que el Hero se oculte correctamente */
+.hidden {
+    display: none !important;
+}

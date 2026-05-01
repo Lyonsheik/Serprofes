@@ -9,6 +9,7 @@
 </head>
 <body>
 
+    <!-- Navegación -->
     <nav id="mainNav">
         <div class="logo">
             <img src="logo.png" alt="Sociality Logo" style="width: 140px; height: auto;">
@@ -24,8 +25,8 @@
         </div>
     </nav>
 
+    <!-- Contenido Dinámico -->
     <main id="appContent">
-        <!-- El contenido cambia dinámicamente entre Hero y Feed -->
         <section class="hero">
             <div class="main-content">
                 <div class="text-side">
@@ -41,12 +42,15 @@
         </section>
     </main>
 
-    <!-- Barra Lateral (Oculta por defecto) -->
+    <!-- Barra Lateral de Contactos -->
     <aside class="sidebar-right" id="sidebarRight" style="display: none;">
         <h3>Personas</h3>
         <div id="usersList"></div>
     </aside>
 
+    <!-- MODALES -->
+    
+    <!-- Modal General (Login/Registro/Features) -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <div id="modalFormContainer"></div>
@@ -54,6 +58,37 @@
         </div>
     </div>
 
+    <!-- Modal de Recuperar Contraseña -->
+    <div class="modal-overlay" id="recoveryModal">
+        <div class="modal-box">
+            <h2>Recuperar Acceso</h2>
+            <p>Introduce tu nombre de usuario para validar tu identidad.</p>
+            <input type="text" id="recoveryUser" placeholder="Nombre de usuario">
+            
+            <div id="recoveryStep2" style="display:none">
+                <input type="password" id="newPass" placeholder="Nueva Contraseña">
+                <button class="btn-join" onclick="handleResetPass()" style="width: 100%;">Cambiar Contraseña</button>
+            </div>
+            
+            <button class="btn-join" id="btnVerifyUser" onclick="verifyUserForRecovery()" style="width: 100%; margin-top: 10px;">Verificar Usuario</button>
+            <p class="close-text" onclick="closeRecoveryModal()">Cancelar</p>
+        </div>
+    </div>
+
+    <!-- Ventana de Chat Flotante -->
+    <div id="chatWindow" class="chat-window" style="display: none;">
+        <div class="chat-header">
+            <span id="chatUserName">Usuario</span>
+            <button onclick="closeChat()">×</button>
+        </div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+            <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- JS al final para asegurar que el DOM esté cargado -->
     <script src="script.js"></script>
 </body>
 </html>
