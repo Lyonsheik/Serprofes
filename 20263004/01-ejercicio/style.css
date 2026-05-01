@@ -1,0 +1,328 @@
+/* 1. CONFIGURACIÓN DE APP NATIVA Y RESET */
+html, body {
+    /* Evita el scroll elástico en iOS y selección de texto accidental */
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none; 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    background: #fff;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+/* Permitir selección solo en campos de texto para usabilidad */
+input, textarea {
+    user-select: text;
+}
+
+/* 2. DISEÑO DEL HERO (CONTENEDOR PRINCIPAL) */
+.hero {
+    width: 100%;
+    min-height: 100vh;
+    padding: 120px 8% 50px; /* Ajuste para el Nav Fijo */
+    position: relative;
+    overflow: hidden;
+    /* Optimización para pantallas Notch (iPhone) */
+    padding-top: calc(100px + env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 3. NAVBAR CON GLASSMORPHISM (Efecto Pro) */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 8%;
+    background: rgba(255, 255, 255, 0.7); /* Fondo traslúcido */
+    backdrop-filter: blur(15px); /* Desenfoque de vidrio */
+    -webkit-backdrop-filter: blur(15px);
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    transition: 0.3s;
+}
+
+.logo { width: 140px; }
+
+.nav-links { list-style: none; }
+.nav-links li { display: inline-block; margin: 0 15px; }
+
+.nav-item {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-item:hover { color: #c639b8; }
+
+/* 4. BOTONES Y ACCIONES */
+.nav-btns { display: flex; align-items: center; }
+
+.logn-btn {
+    text-decoration: none;
+    color: #c639b8;
+    margin-right: 20px;
+    font-weight: 600;
+    border: 2px solid #c639b8;
+    padding: 10px 25px;
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+.btn-download, .btn-join {
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(90deg, #c639b8, #e91e63);
+    padding: 12px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(198, 57, 184, 0.3);
+}
+
+.btn-download:hover, .btn-join:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(198, 57, 184, 0.4);
+}
+
+/* 5. SECCIÓN DE CONTENIDO */
+.main-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.text-side { flex: 1; z-index: 5; }
+.text-side h1 {
+    font-size: clamp(45px, 8vw, 85px);
+    line-height: 1.1;
+    color: #c639b8;
+    margin-bottom: 25px;
+    font-weight: 800;
+}
+
+.text-side p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 35px;
+    max-width: 480px;
+    line-height: 1.6;
+}
+
+/* Imagen con capas */
+.image-side {
+    flex: 1;
+    position: relative;
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.back-img {
+    position: absolute;
+    width: 110%;
+    max-width: 650px;
+    z-index: 1;
+}
+
+.feature-img {
+    width: 85%;
+    max-width: 480px;
+    z-index: 2;
+    position: relative;
+    border-radius: 20px;
+}
+
+/* 6. MODALES Y FORMULARIOS (DISEÑO PREMIUM) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    width: 92%;
+    max-width: 450px;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.active .modal-box { 
+    transform: scale(1); 
+    opacity: 1;
+}
+
+.modal-box input, .modal-box select, .modal-box textarea {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #f0f0f0;
+    border-radius: 15px;
+    background: #f9f9f9;
+    outline: none;
+    font-size: 16px; /* Evita zoom automático en móviles */
+    transition: 0.3s;
+}
+
+.modal-box input:focus {
+    border-color: #c639b8;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(198, 57, 184, 0.1);
+}
+
+/* 7. RESPONSIVE */
+@media (max-width: 900px) {
+    .nav-links { display: none; }
+    
+    .main-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .logo img { max-width: 110px; } /* Logo un poco más pequeño en móvil */
+    .text-side h1 { font-size: 50px; }
+    .text-side p { margin: 0 auto 30px; }
+
+    .image-side {
+        width: 100%;
+        height: 400px;
+        margin-top: 40px;
+    }
+}
+
+/* 8. ANIMACIONES SUAVES */
+.anim {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(5px);
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.anim.show {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+/* Modo Oscuro Automático */
+@media (prefers-color-scheme: dark) {
+    body { background-color: #0f0f0f; color: #fff; }
+    nav { background: rgba(15, 15, 15, 0.7); border-bottom: 1px solid #333; }
+    .nav-item { color: #ccc; }
+    .text-side p { color: #aaa; }
+    .modal-box { background: #1a1a1a; color: #fff; }
+    .modal-box input { background: #252525; border-color: #333; color: #fff; }
+}
+
+/* ESTILOS DEL FEED (ESTILO FACEBOOK) */
+.feed-container {
+    max-width: 700px;
+    margin: 100px auto 20px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.create-post-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.create-post-card textarea {
+    width: 100%;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.post-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+}
+
+/* AJUSTES PARA EDICIÓN Y ELIMINACIÓN */
+.post-header i {
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(45deg, #c639b8, #e91e63);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.post-content {
+    color: #444;
+    line-height: 1.5;
+}
+
+.post-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f9f9f9;
+    display: flex;
+    gap: 20px;
+    color: #888;
+    font-size: 14px;
+}
+
+.post-actions span { cursor: pointer; transition: 0.3s; }
+.post-actions span:hover { color: #c639b8; }
+
+.fa-trash:hover { 
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d !important; 
+}
+
+.fa-pen:hover { 
+    background: rgba(198, 57, 184, 0.1);
+    color: #c639b8 !important; 
+}

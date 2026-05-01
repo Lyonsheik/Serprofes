@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sociality | Red Social</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navegación con LOGO.PNG -->
+    <nav id="mainNav">
+    <div class="logo">
+        <img src="logo.png" alt="Sociality Logo" style="width: 140px; height: auto;">
+    </div>
+    <ul class="nav-links" id="navLinks">
+        <!-- Nuevos enlaces para Modales Informativos -->
+        <li><a href="#" class="nav-item" onclick="showFeatures()">Features</a></li>
+        <li><a href="#" class="nav-item" onclick="showHowItWorks()">How it works</a></li>
+        <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacy</a></li>
+    </ul>
+    <div class="nav-btns" id="authBtns">
+        <button class="logn-btn" id="openLogin">Entrar</button>
+        <button class="btn-join" id="openRegister">Unirse</button>
+    </div>
+</nav>
+
+    <!-- Contenedor Principal -->
+    <main id="appContent">
+        <section class="hero">
+            <div class="main-content">
+                <div class="text-side">
+                    <h1 class="anim">Conecta con <br>tu mundo.</h1>
+                    <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Sociality.</p>
+                    <button class="btn-join anim" id="heroStartBtn">Empezar ahora</button>
+                </div>
+
+                <!-- SECCIÓN DE IMÁGENES: BACK-IMAGE.PNG y PIC.PNG -->
+                <div class="image-side anim">
+                    <img src="back-image.png" class="back-img" alt="Fondo decorativo">
+                    <img src="pic.png" class="feature-img" alt="Interfaz Sociality">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div id="modalFormContainer"></div>
+            <p class="close-text" id="closeModal">Cerrar</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

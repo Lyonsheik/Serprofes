@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sociality - Make Friends</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<!-- Meta etiquetas para App móvil -->
+<meta name="theme-color" content="#c639b8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="logo.png">
+
+<!-- Enlace al manifiesto -->
+<link rel="manifest" href="manifest.json">
+<body>
+    <div class="hero">
+        <nav>
+            <img src="logo.png" class="logo" alt="Sociality">
+            <ul class="nav-links">
+                <!-- Añadimos IDs para identificarlos en JS -->
+                <li><a href="#" class="nav-item" id="featLink">Features</a></li>
+                <li><a href="#" class="nav-item" id="workLink">How it works</a></li>
+                <li><a href="#" class="nav-item" id="privLink">Privacy</a></li>
+            </ul>
+            <div class="nav-btns">
+                <a href="#" class="logn-btn" id="loginBtn">Log in</a>
+                <a href="#" class="btn-download">Download App</a>
+            </div>
+        </nav>
+        
+        <div class="main-content">
+            <div class="text-side">
+                <h1 class="anim">Make <br>New Friends</h1>
+                <p class="anim">Socially is a new social media platform to make friends online in the world. Now let's explore all its amazing features.</p>
+                <!-- Botón Join Now con ID -->
+                <a href="#" class="btn-join anim" id="joinBtn">Join Now</a>
+            </div>
+
+            <div class="image-side anim">
+                <img src="back-image.png" class="back-img" alt="Background">
+                <img src="pic.png" class="feature-img" alt="Feature">
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ÚNICO (Para Info y Registro) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div id="modalContent">
+                <!-- El contenido cambiará dinámicamente aquí -->
+            </div>
+            <p id="closeModal" class="close-text">Close</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
