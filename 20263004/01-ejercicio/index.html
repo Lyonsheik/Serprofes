@@ -9,25 +9,23 @@
 </head>
 <body>
 
-    <!-- Navegación con LOGO.PNG -->
     <nav id="mainNav">
-    <div class="logo">
-        <img src="logo.png" alt="Sociality Logo" style="width: 140px; height: auto;">
-    </div>
-    <ul class="nav-links" id="navLinks">
-        <!-- Nuevos enlaces para Modales Informativos -->
-        <li><a href="#" class="nav-item" onclick="showFeatures()">Features</a></li>
-        <li><a href="#" class="nav-item" onclick="showHowItWorks()">How it works</a></li>
-        <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacy</a></li>
-    </ul>
-    <div class="nav-btns" id="authBtns">
-        <button class="logn-btn" id="openLogin">Entrar</button>
-        <button class="btn-join" id="openRegister">Unirse</button>
-    </div>
-</nav>
+        <div class="logo">
+            <img src="logo.png" alt="Sociality Logo" style="width: 140px; height: auto;">
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" class="nav-item" onclick="showFeatures()">Features</a></li>
+            <li><a href="#" class="nav-item" onclick="showHowItWorks()">How it works</a></li>
+            <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacy</a></li>
+        </ul>
+        <div class="nav-btns" id="authBtns">
+            <button class="logn-btn" id="openLogin">Entrar</button>
+            <button class="btn-join" id="openRegister">Unirse</button>
+        </div>
+    </nav>
 
-    <!-- Contenedor Principal -->
     <main id="appContent">
+        <!-- El contenido cambia dinámicamente entre Hero y Feed -->
         <section class="hero">
             <div class="main-content">
                 <div class="text-side">
@@ -35,8 +33,6 @@
                     <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Sociality.</p>
                     <button class="btn-join anim" id="heroStartBtn">Empezar ahora</button>
                 </div>
-
-                <!-- SECCIÓN DE IMÁGENES: BACK-IMAGE.PNG y PIC.PNG -->
                 <div class="image-side anim">
                     <img src="back-image.png" class="back-img" alt="Fondo decorativo">
                     <img src="pic.png" class="feature-img" alt="Interfaz Sociality">
@@ -45,7 +41,12 @@
         </section>
     </main>
 
-    <!-- Modal -->
+    <!-- Barra Lateral (Oculta por defecto) -->
+    <aside class="sidebar-right" id="sidebarRight" style="display: none;">
+        <h3>Personas</h3>
+        <div id="usersList"></div>
+    </aside>
+
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <div id="modalFormContainer"></div>

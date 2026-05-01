@@ -1,23 +1,18 @@
-// --- BASE DE DATOS LOCAL ---
+// --- BASE DE DATOS AMPLIADA ---
 const socialDB = {
     users: JSON.parse(localStorage.getItem('social_users')) || [],
-    posts: JSON.parse(localStorage.getItem('social_posts')) || [
-        { author: "Admin", content: "¡Bienvenido a Sociality! Prueba a publicar algo.", date: "10/05/2026" }
-    ],
-    currentUser: null
+    posts: JSON.parse(localStorage.getItem('social_posts')) || [],
+    currentUser: null,
+    tempMedia: null 
 };
 
-// --- SELECTORES ---
-const appContent = document.getElementById('appContent');
-const modal = document.getElementById('modalOverlay');
-const formContainer = document.getElementById('modalFormContainer');
-
-// --- FUNCIONES DE NAVEGACIÓN ---
+// --- UTILIDADES ---
 function toggleModal(show, content = '') {
+    const modal = document.getElementById('modalOverlay');
+    const container = document.getElementById('modalFormContainer');
     if (show) {
-        formContainer.innerHTML = content;
+        container.innerHTML = content;
         modal.style.display = 'flex';
-        modal.offsetHeight; 
         modal.classList.add('active');
     } else {
         modal.classList.remove('active');
@@ -34,10 +29,11 @@ window.handleRegister = function() {
     if(!name || !user || !pass) return alert("Por favor, completa todos los campos");
     if(socialDB.users.find(u => u.username === user)) return alert("El usuario ya existe");
 
-    socialDB.users.push({ name, username: user, pass: pass });
+    // Añadimos 'available: true' por defecto para los nuevos registros
+    socialDB.users.push({ name, username: user, pass: pass, available: true });
     localStorage.setItem('social_users', JSON.stringify(socialDB.users));
     
-    alert("¡Cuenta creada con éxito! Ahora inicia sesión.");
+    alert("¡Cuenta creada con éxito!");
     toggleModal(false);
 };
 
@@ -56,45 +52,78 @@ window.handleLogin = function() {
     }
 };
 
-// --- RENDERIZADO DEL MURO ---
+// --- RENDERIZADO DEL MURO Y SIDEBAR ---
 function renderFeed() {
+    // 1. Sidebar de Usuarios
+    const usersList = document.getElementById('usersList');
+    if(usersList) {
+        usersList.innerHTML = socialDB.users.map(u => `
+            <div class="user-item">
+                <div style="position:relative">
+                    <div class="user-avatar" style="width:35px; height:35px; font-size:12px">${u.name[0]}</div>
+                    <span class="status-dot ${u.available ? 'online' : 'offline'}" 
+                          style="position:absolute; bottom:0; right:0"></span>
+                </div>
+                <div>
+                    <div style="font-size:14px; font-weight:600">${u.name}</div>
+                    <div style="font-size:11px; color:#888">${u.available ? 'Disponible' : 'Ocupado'}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 2. Navbar con Selector de Estado
     const authBtns = document.getElementById('authBtns');
     if(authBtns) {
         authBtns.innerHTML = `
             <div style="display:flex; align-items:center; gap:15px">
-                <span style="font-weight:600; color:#c639b8">@${socialDB.currentUser.username}</span>
+                <select onchange="updateStatus(this.value)" style="border:none; background:none; font-weight:600; color:#c639b8; cursor:pointer">
+                    <option value="true" ${socialDB.currentUser.available ? 'selected' : ''}>🟢 En línea</option>
+                    <option value="false" ${!socialDB.currentUser.available ? 'selected' : ''}>🔘 Ocupado</option>
+                </select>
                 <button class="logn-btn" onclick="location.reload()" style="margin:0">Salir</button>
             </div>
         `;
     }
 
+    // 3. Contenedor de Posts
+    const appContent = document.getElementById('appContent');
     appContent.innerHTML = `
-        <div class="feed-container anim show">
+        <div class="feed-container anim show" style="margin-right: 300px;">
             <div class="create-post-card">
-                <h3>¿Qué piensas, ${socialDB.currentUser.name}?</h3>
-                <textarea id="newPostTxt" placeholder="Escribe algo..."></textarea>
-                <button class="btn-join" onclick="publishPost()">Publicar</button>
+                <h3>Hola, ${socialDB.currentUser.name}</h3>
+                <textarea id="newPostTxt" placeholder="Comparte algo especial..."></textarea>
+                
+                <div id="previewBox" class="media-preview-container" style="display: none;">
+                    <img id="imgPrev" src="">
+                    <button onclick="removeMedia()" class="remove-media-btn">×</button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+                    <label class="btn-media" style="cursor:pointer">
+                        <i class="fa-solid fa-image"></i> Multimedia
+                        <input type="file" id="mediaInput" hidden accept="image/*" onchange="handleMedia(this)">
+                    </label>
+                    <button class="btn-join" onclick="publishPost()">Publicar</button>
+                </div>
             </div>
             <div id="postsWrapper">
                 ${socialDB.posts.map((post, index) => `
                     <div class="post-card anim show">
-                        <div class="post-header" style="justify-content: space-between;">
+                        <div class="post-header" style="display:flex; justify-content: space-between; align-items:center;">
                             <div style="display: flex; gap: 12px; align-items: center;">
                                 <div class="user-avatar">${post.author[0].toUpperCase()}</div>
                                 <div><strong>${post.author}</strong><br><small>${post.date}</small></div>
                             </div>
                             ${post.author === socialDB.currentUser.name ? `
                                 <div style="display: flex; gap: 10px; color: #888;">
-                                    <i class="fa-solid fa-pen" style="cursor:pointer" onclick="editPost(${index})" title="Editar"></i>
-                                    <i class="fa-solid fa-trash" style="cursor:pointer" onclick="deletePost(${index})" title="Eliminar"></i>
+                                    <i class="fa-solid fa-pen" onclick="editPost(${index})" style="cursor:pointer"></i>
+                                    <i class="fa-solid fa-trash" onclick="deletePost(${index})" style="cursor:pointer"></i>
                                 </div>
                             ` : ''}
                         </div>
-                        <div class="post-content">${post.content}</div>
-                        <div class="post-actions">
-                            <span><i class="fa-regular fa-heart"></i> Me gusta</span>
-                            <span><i class="fa-regular fa-comment"></i> Comentar</span>
-                        </div>
+                        <div class="post-content" style="margin-top:15px">${post.content}</div>
+                        ${post.media ? `<img src="${post.media}" class="post-media-content">` : ''}
                     </div>
                 `).join('')}
             </div>
@@ -102,21 +131,51 @@ function renderFeed() {
     `;
 }
 
-// --- PUBLICAR POST ---
+// --- LOGICA MULTIMEDIA ---
+window.handleMedia = function(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            socialDB.tempMedia = e.target.result;
+            document.getElementById('imgPrev').src = e.target.result;
+            document.getElementById('previewBox').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+window.removeMedia = function() {
+    socialDB.tempMedia = null;
+    document.getElementById('previewBox').style.display = 'none';
+    document.getElementById('mediaInput').value = "";
+};
+
+// --- ACTUALIZAR ESTADO ---
+window.updateStatus = function(val) {
+    const status = val === "true";
+    socialDB.currentUser.available = status;
+    const idx = socialDB.users.findIndex(u => u.username === socialDB.currentUser.username);
+    socialDB.users[idx].available = status;
+    localStorage.setItem('social_users', JSON.stringify(socialDB.users));
+    renderFeed();
+};
+
+// --- PUBLICAR CON MEDIA ---
 window.publishPost = function() {
     const txt = document.getElementById('newPostTxt').value;
-    if(!txt.trim()) return alert("¡No puedes publicar un mensaje vacío!");
+    if(!txt.trim() && !socialDB.tempMedia) return alert("Escribe algo o sube una imagen");
 
     const now = new Date();
-    const dateStr = `${now.getDate()}/${now.getMonth()+1} ${now.getHours()}:${now.getMinutes()}`;
-
     socialDB.posts.unshift({
         author: socialDB.currentUser.name,
         content: txt,
-        date: dateStr
+        media: socialDB.tempMedia,
+        date: now.toLocaleTimeString()
     });
 
     localStorage.setItem('social_posts', JSON.stringify(socialDB.posts));
+    socialDB.tempMedia = null;
     renderFeed(); 
 };
 
@@ -134,7 +193,6 @@ window.editPost = function(index) {
     const newText = prompt("Edita tu publicación:", post.content);
     if (newText !== null && newText.trim() !== "") {
         socialDB.posts[index].content = newText;
-        socialDB.posts[index].date += " (editado)";
         localStorage.setItem('social_posts', JSON.stringify(socialDB.posts));
         renderFeed();
     }
