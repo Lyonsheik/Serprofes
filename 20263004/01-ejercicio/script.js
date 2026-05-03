@@ -152,7 +152,7 @@ window.showPrivacy = () => {
         <h2>Privacidad</h2>
         <p style="margin-top:20px; line-height:1.8; color:#666;">
             Tus datos están almacenados localmente y tú decides qué compartir. 
-            En Sociality, la privacidad y el control son tuyos.
+            En Globalink, la privacidad y el control son tuyos.
         </p>
     `);
 };

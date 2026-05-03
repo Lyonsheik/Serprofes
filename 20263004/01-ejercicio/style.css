@@ -5,10 +5,10 @@
 
 /* 1. VARIABLES Y RESET */
 :root {
-    --primary: #c639b8;
-    --primary-dark: #a02d99;
-    --secondary: #e91e63;
-    --gradient: linear-gradient(135deg, #c639b8, #e91e63);
+    --primary: hsl(263, 55%, 50%);
+    --primary-dark: #552da0;
+    --secondary: #552da0;
+    --gradient: linear-gradient(135deg, #2d68a0, #a02d7d);
     --gradient-soft: linear-gradient(135deg, rgba(198,57,184,0.15), rgba(233,30,99,0.1));
 
     /* Light theme */
@@ -43,7 +43,7 @@
 }
 
 html, body {
-    margin: 0; padding: 0;
+    margin: 0; padding: 0; 
     font-family: 'Outfit', 'Poppins', sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -168,7 +168,7 @@ nav#mainNav {
     justify-content: center;
     z-index: 1;
 }
-.back-img { position: absolute; width: 110%; max-width: 650px; z-index: 1; }
+.back-img { position: absolute; width: 5000%; max-width: 1200px; z-index: 1; }
 .feature-img { width: 85%; max-width: 480px; z-index: 2; position: relative; border-radius: 20px; }
 
 /* Animaciones Landing */
@@ -1291,10 +1291,10 @@ nav#mainNav {
    ============================================================ */
 .reels-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: center;
     align-items: center;
     gap: 20px;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 .reel-card {
     width: 100%;
@@ -1308,8 +1308,8 @@ nav#mainNav {
 }
 .reel-bg {
     width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 60px;
+    display: flex; align-items: up; justify-content: center;
+    font-size: 70px;
 }
 .reel-overlay {
     position: absolute; inset: 0;
@@ -1320,7 +1320,7 @@ nav#mainNav {
 .reel-author { color: #fff; font-weight: 700; font-size: 16px; margin-bottom: 5px; }
 .reel-desc { color: rgba(255,255,255,0.8); font-size: 14px; }
 .reel-actions-side {
-    position: absolute; right: 15px; bottom: 80px;
+    position: absolute; right: 20px; bottom: 80px;
     display: flex; flex-direction: column; gap: 18px; align-items: center;
 }
 .reel-action-btn {
