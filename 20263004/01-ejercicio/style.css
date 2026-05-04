@@ -1293,7 +1293,7 @@ nav#mainNav {
     display: flex;
     flex-direction: center;
     align-items: center;
-    gap: 20px;
+    gap: 30px;
     padding: 5px 0;
 }
 .reel-card {
@@ -1478,3 +1478,6 @@ nav#mainNav {
 
 /* Parallax hero image */
 .feature-img { transition: transform 0.1s linear; }
+
+
+
