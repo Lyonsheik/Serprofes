@@ -5,10 +5,10 @@
 
 /* 1. VARIABLES Y RESET */
 :root {
-    --primary: hsl(263, 55%, 50%);
-    --primary-dark: #552da0;
-    --secondary: #552da0;
-    --gradient: linear-gradient(135deg, #2d68a0, #a02d7d);
+    --primary: #7f2da0;
+    --primary-dark: #7f2da0;
+    --secondary: #a02d99;
+    --gradient: linear-gradient(135deg, #c639b8, #1e8ee9);
     --gradient-soft: linear-gradient(135deg, rgba(198,57,184,0.15), rgba(233,30,99,0.1));
 
     /* Light theme */
@@ -43,7 +43,7 @@
 }
 
 html, body {
-    margin: 0; padding: 0; 
+    margin: 0; padding: 0;
     font-family: 'Outfit', 'Poppins', sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -168,7 +168,7 @@ nav#mainNav {
     justify-content: center;
     z-index: 1;
 }
-.back-img { position: absolute; width: 5000%; max-width: 1200px; z-index: 1; }
+.back-img { position: absolute; width: 110%; max-width: 650px; z-index: 1; }
 .feature-img { width: 85%; max-width: 480px; z-index: 2; position: relative; border-radius: 20px; }
 
 /* Animaciones Landing */
@@ -1291,10 +1291,10 @@ nav#mainNav {
    ============================================================ */
 .reels-wrapper {
     display: flex;
-    flex-direction: center;
+    flex-direction: column;
     align-items: center;
-    gap: 30px;
-    padding: 5px 0;
+    gap: 20px;
+    padding: 10px 0;
 }
 .reel-card {
     width: 100%;
@@ -1308,8 +1308,8 @@ nav#mainNav {
 }
 .reel-bg {
     width: 100%; height: 100%;
-    display: flex; align-items: up; justify-content: center;
-    font-size: 70px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px;
 }
 .reel-overlay {
     position: absolute; inset: 0;
@@ -1320,7 +1320,7 @@ nav#mainNav {
 .reel-author { color: #fff; font-weight: 700; font-size: 16px; margin-bottom: 5px; }
 .reel-desc { color: rgba(255,255,255,0.8); font-size: 14px; }
 .reel-actions-side {
-    position: absolute; right: 20px; bottom: 80px;
+    position: absolute; right: 15px; bottom: 80px;
     display: flex; flex-direction: column; gap: 18px; align-items: center;
 }
 .reel-action-btn {
@@ -1479,5 +1479,276 @@ nav#mainNav {
 /* Parallax hero image */
 .feature-img { transition: transform 0.1s linear; }
 
+/* ============================================================
+   20. REACTION BAR (hover sobre Me gusta)
+   ============================================================ */
+.reaction-wrapper { position: relative; display: inline-block; }
 
+.reaction-bar {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 10px;
+    display: flex;
+    gap: 4px;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px) scale(0.9);
+    transition: all 0.2s cubic-bezier(0.175,0.885,0.32,1.275);
+    z-index: 200;
+    white-space: nowrap;
+}
+.reaction-bar.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0) scale(1);
+}
+
+.reaction-emoji-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: transform 0.15s ease;
+    line-height: 1;
+}
+.reaction-emoji-btn:hover { transform: scale(1.4) translateY(-4px); }
+.reaction-emoji-btn.active { transform: scale(1.2); }
+
+/* ============================================================
+   21. COMMENT THREAD
+   ============================================================ */
+.comment-thread { margin-bottom: 2px; }
+
+/* ============================================================
+   22. REELS — PLAYER COMPLETO
+   ============================================================ */
+.reels-player-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-height) - 40px);
+    min-height: 600px;
+}
+
+.reels-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 16px;
+    flex-shrink: 0;
+}
+
+.reels-scroll {
+    flex: 1;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.reels-scroll::-webkit-scrollbar { display: none; }
+
+/* Cada reel ocupa 100% del viewport del scroll */
+.reel-card-full {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: calc(100vh - var(--header-height) - 80px);
+    min-height: 500px;
+    max-height: 700px;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    background: #111;
+    overflow: hidden;
+    scroll-snap-align: start;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+/* Marco de video (ocupa todo el card) */
+.reel-video-frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #000;
+}
+
+/* Thumbnail antes de reproducir */
+.reel-thumb-placeholder {
+    width: 100%; height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.reel-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.25);
+    transition: background 0.2s;
+}
+.reel-play-overlay:hover { background: rgba(0,0,0,0.1); }
+
+.reel-play-btn {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    padding-left: 4px; /* optical center for play icon */
+    transition: transform 0.2s;
+    border: 2px solid rgba(255,255,255,0.5);
+}
+.reel-play-btn:hover { transform: scale(1.1); }
+
+/* Overlay de info en la parte inferior */
+.reel-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 40%, transparent 70%);
+    pointer-events: none;
+    border-radius: 20px;
+    z-index: 5;
+}
+
+.reel-card-info {
+    position: absolute;
+    bottom: 20px;
+    left: 16px;
+    right: 70px;
+    pointer-events: all;
+    z-index: 6;
+}
+
+.reel-author-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Botones de acción en el lado derecho */
+.reel-side-actions {
+    position: absolute;
+    right: 12px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    z-index: 6;
+}
+
+.reel-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+}
+.reel-action-btn:hover { transform: scale(1.15); }
+.reel-like-icon.fa-solid { color: #ff4d4d !important; }
+
+/* Spinner de carga */
+.reels-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 14px;
+    min-height: 200px;
+}
+
+.reels-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   23. MODAL DE PREFERENCIAS DE REELS
+   ============================================================ */
+.prefs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.pref-chip {
+    padding: 9px 16px;
+    border-radius: 25px;
+    border: 2px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+}
+.pref-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+}
+.pref-chip.selected {
+    background: var(--gradient);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(198,57,184,0.3);
+}
+
+/* Subchips de géneros musicales */
+.music-subs-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0 4px 16px;
+    animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+.sub-chip {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    border-color: rgba(198,57,184,0.3) !important;
+}
+
+/* ============================================================
+   24. MODO OSCURO — COMPLETAR PARA NUEVOS ELEMENTOS
+   ============================================================ */
+[data-theme="dark"] .reaction-bar { background: #222; border-color: #333; }
+[data-theme="dark"] .reel-card-full { background: #000; }
+[data-theme="dark"] .pref-chip { background: #252525; border-color: #333; color: #aaa; }
+[data-theme="dark"] .pref-chip:hover { background: var(--bg-hover); }
+[data-theme="dark"] .music-subs-container { border-color: #333; }
+[data-theme="dark"] .reels-player-container { background: transparent; }
 

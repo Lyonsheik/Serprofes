@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Globalink | Red Social</title>
+    <title>Sociality | Red Social</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
     <div id="landingPage">
         <nav id="mainNav">
             <div class="logo">
-                <img src="Logo.png" alt="Sociality Logo" style="width:100px; height:auto;">
+                <img src="Logo.png" alt="Sociality Logo" style="width:140px; height:auto;">
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#" class="nav-item" onclick="showFeatures()">Características</a></li>
-                <li><a href="#" class="nav-item" onclick="showHowItWorks()">¿Cómo funciona?</a></li>
-                <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacidad</a></li>
+                <li><a href="#" class="nav-item" onclick="showFeatures()">Features</a></li>
+                <li><a href="#" class="nav-item" onclick="showHowItWorks()">How it works</a></li>
+                <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacy</a></li>
             </ul>
             <div class="nav-btns" id="authBtns">
                 <button class="logn-btn" id="openLogin">Entrar</button>
@@ -31,14 +31,13 @@
             <section class="hero">
                 <div class="main-content">
                     <div class="text-side">
-                      <h1 class="anim">Conecta con <br>tu mundo.</h1>
-                        <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Globalink.</p>  
-
+                        <h1 class="anim">Conecta con <br>tu mundo.</h1>
+                        <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Sociality.</p>
                         <button class="btn-join anim" id="heroStartBtn">Empezar ahora</button>
                     </div>
                     <div class="image-side anim">
                         <img src="Globalink.png" class="back-img" alt="Fondo decorativo">
-                        
+                        <img src="" class="feature-img" alt="Interfaz Sociality">
                     </div>
                 </div>
             </section>
@@ -51,7 +50,7 @@
         <!-- Sidebar Izquierdo (Nav Principal) -->
         <aside class="sidebar-left" id="sidebarLeft">
             <div class="sidebar-logo">
-                <img src="Logo.png" alt="Globalink" style="width:110px;">
+                <img src="logo.png" alt="Sociality" style="width:110px;">
             </div>
 
             <nav class="sidebar-nav">
@@ -218,10 +217,21 @@
         <img id="fullscreenImg" src="" alt="">
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
-asegurar que el DOM esté cargado -->
+    <!-- ===== OVERLAY: COMPARTIR POST ===== -->
+    <div class="modal-overlay" id="shareModalOverlay" style="display:none; z-index:5500;">
+        <!-- Contenido inyectado por JS -->
+    </div>
+
+    <!-- ===== OVERLAY: VER PERFIL DE AMIGO ===== -->
+    <div class="modal-overlay" id="friendProfileOverlay" style="display:none; z-index:5500;">
+        <!-- Contenido inyectado por JS -->
+    </div>
+
+    <!-- ===== OVERLAY: PREFERENCIAS DE REELS ===== -->
+    <div class="modal-overlay" id="reelPrefsOverlay" style="display:none; z-index:5500;">
+        <!-- Contenido inyectado por JS -->
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
