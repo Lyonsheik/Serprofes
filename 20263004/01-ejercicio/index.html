@@ -2,8 +2,8 @@
 <html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sociality | Red Social</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Globalink | Red Social</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
     <div id="landingPage">
         <nav id="mainNav">
             <div class="logo">
-                <img src="Logo.png" alt="Sociality Logo" style="width:140px; height:auto;">
+                <img src="Logo.png" alt="Globalink Logo" style="width:140px;height:auto;">
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#" class="nav-item" onclick="showFeatures()">Features</a></li>
-                <li><a href="#" class="nav-item" onclick="showHowItWorks()">How it works</a></li>
-                <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacy</a></li>
+                <li><a href="#" class="nav-item" onclick="showFeatures()">Características</a></li>
+                <li><a href="#" class="nav-item" onclick="showHowItWorks()">¿Cómo funciona?</a></li>
+                <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacidad</a></li>
             </ul>
             <div class="nav-btns" id="authBtns">
                 <button class="logn-btn" id="openLogin">Entrar</button>
@@ -32,39 +32,33 @@
                 <div class="main-content">
                     <div class="text-side">
                         <h1 class="anim">Conecta con <br>tu mundo.</h1>
-                        <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Sociality.</p>
+                        <p class="anim">Crea un perfil, comparte tus ideas y chatea en tiempo real con Globalink.</p>
                         <button class="btn-join anim" id="heroStartBtn">Empezar ahora</button>
                     </div>
                     <div class="image-side anim">
                         <img src="Globalink.png" class="back-img" alt="Fondo decorativo">
-                        <img src="" class="feature-img" alt="Interfaz Sociality">
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- ===================== APP PRINCIPAL (post-login) ===================== -->
+    <!-- ===================== APP PRINCIPAL ===================== -->
     <div id="socialApp" style="display:none;">
 
-        <!-- Sidebar Izquierdo (Nav Principal) -->
+        <!-- Sidebar Izquierdo -->
         <aside class="sidebar-left" id="sidebarLeft">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="Sociality" style="width:110px;">
+                <img src="Logo.png" alt="Globalink" style="width:110px;">
             </div>
-
             <nav class="sidebar-nav">
                 <div class="nav-group">
                     <div class="sidebar-item active" id="nav-inicio" onclick="switchSection('inicio')">
-                        <div class="sidebar-icon-wrap">
-                            <i class="fa-solid fa-house"></i>
-                        </div>
+                        <div class="sidebar-icon-wrap"><i class="fa-solid fa-house"></i></div>
                         <span>Inicio</span>
                     </div>
                     <div class="sidebar-item" id="nav-buscar" onclick="switchSection('buscar')">
-                        <div class="sidebar-icon-wrap">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
+                        <div class="sidebar-icon-wrap"><i class="fa-solid fa-magnifying-glass"></i></div>
                         <span>Buscar</span>
                     </div>
                     <div class="sidebar-item" id="nav-amigos" onclick="switchSection('amigos')">
@@ -89,15 +83,11 @@
                         <span>Mensajes</span>
                     </div>
                     <div class="sidebar-item" id="nav-reels" onclick="switchSection('reels')">
-                        <div class="sidebar-icon-wrap">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </div>
+                        <div class="sidebar-icon-wrap"><i class="fa-brands fa-tiktok"></i></div>
                         <span>Reels</span>
                     </div>
                 </div>
             </nav>
-
-            <!-- Perfil mini en sidebar -->
             <div class="sidebar-profile" id="sidebarProfile">
                 <div class="mini-avatar" id="sidebarAvatar"></div>
                 <div class="mini-info">
@@ -110,32 +100,24 @@
             </div>
         </aside>
 
-        <!-- Área de contenido principal -->
+        <!-- Área principal -->
         <main class="app-main" id="appMain">
-
-            <!-- Barra superior -->
             <header class="app-header">
                 <h2 class="section-title" id="sectionTitle">Inicio</h2>
                 <div class="header-actions">
-                    <!-- Toggle Modo Oscuro/Claro -->
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
                         <i class="fa-solid fa-moon" id="themeIcon"></i>
                     </button>
                 </div>
             </header>
-
-            <!-- Contenido dinámico -->
-            <div class="content-area" id="contentArea">
-                <!-- Renderizado por JS -->
-            </div>
+            <div class="content-area" id="contentArea"></div>
         </main>
 
-        <!-- Sidebar Derecho (Contactos/Sugerencias) -->
+        <!-- Sidebar Derecho -->
         <aside class="sidebar-right" id="sidebarRight">
             <div class="right-sidebar-inner">
                 <h4 class="sidebar-section-title">Personas</h4>
                 <div id="contactsList"></div>
-
                 <h4 class="sidebar-section-title" style="margin-top:25px;">Sugerencias</h4>
                 <div id="suggestionsList"></div>
             </div>
@@ -144,11 +126,11 @@
         <!-- Chat Flotante -->
         <div id="chatWindow" class="chat-window" style="display:none;">
             <div class="chat-header">
-                <div style="display:flex; align-items:center; gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
                     <div class="chat-avatar" id="chatAvatar"></div>
                     <div>
-                        <div id="chatUserName" style="font-weight:600; font-size:15px;"></div>
-                        <div style="font-size:11px; opacity:0.8;">En línea</div>
+                        <div id="chatUserName" style="font-weight:600;font-size:15px;"></div>
+                        <div style="font-size:11px;opacity:0.8;">En línea</div>
                     </div>
                 </div>
                 <button onclick="closeChat()" class="chat-close-btn">×</button>
@@ -163,17 +145,38 @@
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
-            <!-- Emoji Picker -->
             <div class="emoji-picker" id="emojiPicker" style="display:none;">
                 <div class="emoji-grid" id="emojiGrid"></div>
             </div>
         </div>
 
+        <!-- Barra de navegación móvil inferior -->
+        <nav class="mobile-bottom-nav" id="mobileNav">
+            <div class="nav-tab active" id="mnav-inicio" onclick="switchSection('inicio')">
+                <i class="fa-solid fa-house"></i><span>Inicio</span>
+            </div>
+            <div class="nav-tab" id="mnav-buscar" onclick="switchSection('buscar')">
+                <i class="fa-solid fa-magnifying-glass"></i><span>Buscar</span>
+            </div>
+            <div class="nav-tab" id="mnav-reels" onclick="switchSection('reels')">
+                <i class="fa-brands fa-tiktok"></i><span>Reels</span>
+            </div>
+            <div class="nav-tab" id="mnav-notificaciones" onclick="switchSection('notificaciones')" style="position:relative;">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge" id="mbadge-notificaciones" style="display:none;position:absolute;top:4px;right:8px;">0</span>
+                <span>Notif.</span>
+            </div>
+            <div class="nav-tab" id="mnav-mensajes" onclick="switchSection('mensajes')" style="position:relative;">
+                <i class="fa-solid fa-message"></i>
+                <span class="badge" id="mbadge-mensajes" style="display:none;position:absolute;top:4px;right:8px;">0</span>
+                <span>Mensajes</span>
+            </div>
+        </nav>
     </div>
 
-    <!-- ===================== MODALES LANDING ===================== -->
+    <!-- ===================== MODALES ===================== -->
 
-    <!-- Modal General (Login/Registro/Features) -->
+    <!-- Modal general -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <div id="modalFormContainer"></div>
@@ -181,7 +184,7 @@
         </div>
     </div>
 
-    <!-- Modal de Recuperar Contraseña -->
+    <!-- Modal recuperar contraseña -->
     <div class="modal-overlay" id="recoveryModal">
         <div class="modal-box">
             <h2>Recuperar Acceso</h2>
@@ -191,20 +194,20 @@
                 <input type="password" id="newPass" placeholder="Nueva Contraseña">
                 <button class="btn-join" onclick="handleResetPass()" style="width:100%;">Cambiar Contraseña</button>
             </div>
-            <button class="btn-join" id="btnVerifyUser" onclick="verifyUserForRecovery()" style="width:100%; margin-top:10px;">Verificar Usuario</button>
+            <button class="btn-join" id="btnVerifyUser" onclick="verifyUserForRecovery()" style="width:100%;margin-top:10px;">Verificar Usuario</button>
             <p class="close-text" onclick="closeRecoveryModal()">Cancelar</p>
         </div>
     </div>
 
-    <!-- Modal Historia (ver historia completa) -->
+    <!-- Modal Historia -->
     <div class="story-modal" id="storyModal" style="display:none;" onclick="closeStoryModal()">
         <div class="story-modal-content" onclick="event.stopPropagation()">
             <div class="story-progress-bar"><div class="story-progress-fill" id="storyProgressFill"></div></div>
             <div class="story-modal-header">
-                <div style="display:flex; align-items:center; gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
                     <div class="story-modal-avatar" id="storyModalAvatar"></div>
-                    <span id="storyModalAuthor" style="font-weight:600; color:#fff;"></span>
-                    <span id="storyModalTime" style="font-size:12px; opacity:0.7; color:#fff;"></span>
+                    <span id="storyModalAuthor" style="font-weight:600;color:#fff;"></span>
+                    <span id="storyModalTime" style="font-size:12px;opacity:0.7;color:#fff;"></span>
                 </div>
                 <button onclick="closeStoryModal()" style="background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">×</button>
             </div>
@@ -212,25 +215,25 @@
         </div>
     </div>
 
-    <!-- Modal imagen fullscreen -->
+    <!-- Imagen fullscreen -->
     <div class="img-fullscreen" id="imgFullscreen" style="display:none;" onclick="closeFullscreen()">
         <img id="fullscreenImg" src="" alt="">
     </div>
 
-    <!-- ===== OVERLAY: COMPARTIR POST ===== -->
-    <div class="modal-overlay" id="shareModalOverlay" style="display:none; z-index:5500;">
-        <!-- Contenido inyectado por JS -->
-    </div>
+    <!-- OVERLAY: Compartir post -->
+    <div class="modal-overlay" id="shareModalOverlay" style="display:none;z-index:5500;"></div>
 
-    <!-- ===== OVERLAY: VER PERFIL DE AMIGO ===== -->
-    <div class="modal-overlay" id="friendProfileOverlay" style="display:none; z-index:5500;">
-        <!-- Contenido inyectado por JS -->
-    </div>
+    <!-- OVERLAY: Perfil de amigo -->
+    <div class="modal-overlay" id="friendProfileOverlay" style="display:none;z-index:5500;"></div>
 
-    <!-- ===== OVERLAY: PREFERENCIAS DE REELS ===== -->
-    <div class="modal-overlay" id="reelPrefsOverlay" style="display:none; z-index:5500;">
-        <!-- Contenido inyectado por JS -->
-    </div>
+    <!-- OVERLAY: Preferencias de Reels -->
+    <div class="modal-overlay" id="reelPrefsOverlay" style="display:none;z-index:5500;"></div>
+
+    <!-- OVERLAY: Comentarios de Reel -->
+    <div class="modal-overlay" id="reelCommentsOverlay" style="display:none;z-index:5500;"></div>
+
+    <!-- OVERLAY: Editor de Reel/Video -->
+    <div class="modal-overlay" id="reelEditorOverlay" style="display:none;z-index:5500;"></div>
 
     <script src="script.js"></script>
 </body>
