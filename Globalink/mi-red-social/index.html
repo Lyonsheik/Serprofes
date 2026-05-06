@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- EmailJS: envío de emails desde el navegador sin backend -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- hCaptcha: verificación "no soy un robot" (RGPD-friendly) -->
+    <script src="https://js.hcaptcha.com/1/api.js" async defer onload="window._hcaptchaReady=true;"></script>
 </head>
 <body>
 
@@ -19,13 +23,31 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#" class="nav-item" onclick="showFeatures()">Características</a></li>
                 <li><a href="#" class="nav-item" onclick="showHowItWorks()">¿Cómo funciona?</a></li>
-                <li><a href="#" class="nav-item" onclick="showPrivacy()">Privacidad</a></li>
+                <li><a href="#" class="nav-item" onclick="showLegal('aviso')">Aviso Legal</a></li>
+                <li><a href="#" class="nav-item" onclick="showLegal('privacidad')">Privacidad</a></li>
+                <li><a href="#" class="nav-item" onclick="showLegal('terminos')">Términos de Uso</a></li>
+                <li><a href="#" class="nav-item" onclick="showLegal('cookies')">Cookies</a></li>
             </ul>
             <div class="nav-btns" id="authBtns">
                 <button class="logn-btn" id="openLogin">Entrar</button>
                 <button class="btn-join" id="openRegister">Unirse</button>
+                <!-- Botón hamburguesa — solo visible en móvil -->
+                <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menú">
+                    <i class="fa-solid fa-bars" id="hamburgerIcon"></i>
+                </button>
             </div>
         </nav>
+
+        <!-- Menú móvil desplegable -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#" class="mobile-menu-item" onclick="showFeatures();closeMobileMenu()"><i class="fa-solid fa-star"></i> Características</a>
+            <a href="#" class="mobile-menu-item" onclick="showHowItWorks();closeMobileMenu()"><i class="fa-solid fa-circle-question"></i> ¿Cómo funciona?</a>
+            <div class="mobile-menu-divider"></div>
+            <a href="#" class="mobile-menu-item" onclick="showLegal('aviso');closeMobileMenu()"><i class="fa-solid fa-scale-balanced"></i> Aviso Legal</a>
+            <a href="#" class="mobile-menu-item" onclick="showLegal('privacidad');closeMobileMenu()"><i class="fa-solid fa-lock"></i> Privacidad</a>
+            <a href="#" class="mobile-menu-item" onclick="showLegal('terminos');closeMobileMenu()"><i class="fa-solid fa-file-contract"></i> Términos de Uso</a>
+            <a href="#" class="mobile-menu-item" onclick="showLegal('cookies');closeMobileMenu()"><i class="fa-solid fa-cookie-bite"></i> Cookies</a>
+        </div>
 
         <main id="appContent">
             <section class="hero">
@@ -83,7 +105,7 @@
                         <span>Mensajes</span>
                     </div>
                     <div class="sidebar-item" id="nav-reels" onclick="switchSection('reels')">
-                        <div class="sidebar-icon-wrap"><i class="fa-brands fa-tiktok"></i></div>
+                        <div class="sidebar-icon-wrap"><i class="fa-solid fa-clapperboard"></i></div>
                         <span>Reels</span>
                     </div>
                 </div>
@@ -103,10 +125,18 @@
         <!-- Área principal -->
         <main class="app-main" id="appMain">
             <header class="app-header">
-                <h2 class="section-title" id="sectionTitle">Inicio</h2>
+                <!-- En escritorio: título de sección. En móvil: logo Globalink -->
+                <div class="header-logo-mobile">
+                    <img src="Logo.png" alt="Globalink" style="height:32px;width:auto;">
+                </div>
+                <h2 class="section-title header-title-desktop" id="sectionTitle">Inicio</h2>
                 <div class="header-actions">
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
                         <i class="fa-solid fa-moon" id="themeIcon"></i>
+                    </button>
+                    <!-- Logout solo visible en móvil (en desktop está en sidebar) -->
+                    <button class="logout-btn-mobile" onclick="logoutUser()" title="Cerrar sesión">
+                        <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
             </header>
@@ -159,7 +189,7 @@
                 <i class="fa-solid fa-magnifying-glass"></i><span>Buscar</span>
             </div>
             <div class="nav-tab" id="mnav-reels" onclick="switchSection('reels')">
-                <i class="fa-brands fa-tiktok"></i><span>Reels</span>
+                <i class="fa-solid fa-clapperboard"></i><span>Reels</span>
             </div>
             <div class="nav-tab" id="mnav-notificaciones" onclick="switchSection('notificaciones')" style="position:relative;">
                 <i class="fa-solid fa-bell"></i>
@@ -234,6 +264,38 @@
 
     <!-- OVERLAY: Editor de Reel/Video -->
     <div class="modal-overlay" id="reelEditorOverlay" style="display:none;z-index:5500;"></div>
+
+    <!-- ===== BANNER DE COOKIES (RGPD / LSSI) ===== -->
+    <div id="cookieBanner" style="display:none;">
+        <div class="cookie-banner-inner">
+            <div class="cookie-banner-text">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <span style="font-size:26px;">🍪</span>
+                    <strong style="font-size:15px;color:var(--text);">Globalink y las cookies</strong>
+                </div>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:6px;">
+                    Usamos <strong>únicamente cookies técnicas esenciales</strong> para el funcionamiento de la plataforma (sesión de usuario). <strong>No usamos cookies publicitarias ni de rastreo de terceros.</strong>
+                </p>
+                <p style="font-size:12px;color:var(--text-muted);">
+                    Base legal: art. 22 LSSI-CE y art. 6.1.b RGPD (ejecución de contrato). 
+                    <span onclick="showPrivacyFullPage()" style="color:var(--primary);cursor:pointer;text-decoration:underline;">Más información</span>
+                </p>
+            </div>
+            <div class="cookie-banner-btns">
+                <button class="btn-outline" onclick="cookieChoice('essential')" style="font-size:13px;padding:9px 18px;white-space:nowrap;">Solo esenciales</button>
+                <button class="btn-join" onclick="cookieChoice('accept')" style="font-size:13px;padding:9px 20px;white-space:nowrap;"><i class="fa-solid fa-check" style="margin-right:6px;"></i>Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL LEGAL COMPLETO ===== -->
+    <div class="modal-overlay" id="legalModal" style="z-index:6500;">
+        <div class="modal-box" style="max-width:620px;text-align:left;" id="legalModalBox">
+        </div>
+    </div>
+
+    <!-- Contenedor hCaptcha (se mueve dinámicamente al modal) -->
+    <div id="hcaptchaContainer" style="display:none;"></div>
 
     <script src="script.js"></script>
 </body>

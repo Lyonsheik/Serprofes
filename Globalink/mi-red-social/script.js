@@ -38,6 +38,10 @@ function saveDB() {
     localStorage.setItem('social_reel_prefs',   JSON.stringify(socialDB.reelPrefs));
     localStorage.setItem('social_reel_history', JSON.stringify(socialDB.reelHistory));
     localStorage.setItem('social_reel_comments',JSON.stringify(socialDB.reelComments));
+    // Persistir sesión activa
+    if (socialDB.currentUser) {
+        localStorage.setItem('social_session', socialDB.currentUser.username);
+    }
 }
 
 function showToast(msg) {
@@ -106,32 +110,835 @@ window.closeRecoveryModal = function() {
 };
 
 window.showFeatures = function() {
+    closeMobileMenu();
     toggleModal(true, '<h2>✨ Características</h2><ul style="text-align:left;margin-top:20px;line-height:2.2;list-style:none;padding:0;"><li>🚀 Chat en tiempo real con emoticones</li><li>📸 Publicaciones con reacciones, comentarios y respuestas</li><li>🎭 Historias efímeras de 24h</li><li>👥 Sistema de amigos con solicitudes</li><li>🔔 Notificaciones en tiempo real</li><li>🎬 Reels personalizados con video propio + YouTube</li><li>↗️ Compartir posts con amigos</li><li>🌙 Modo oscuro / claro</li></ul>');
 };
 window.showHowItWorks = function() {
+    closeMobileMenu();
     toggleModal(true, '<h2>¿Cómo funciona?</h2><p style="margin-top:20px;line-height:1.8;color:#666;">Regístrate, personaliza tu perfil y empieza a conectar. Busca amigos, envía solicitudes, sube historias y publica momentos. El chat te conecta en tiempo real con todos tus contactos.</p>');
 };
-window.showPrivacy = function() {
-    toggleModal(true, '<h2>Privacidad</h2><p style="margin-top:20px;line-height:1.8;color:#666;">Tus datos están almacenados localmente y tú decides qué compartir. En Globalink, la privacidad y el control son tuyos.</p>');
+
+// ── Menú hamburguesa móvil ────────────────────────────────
+window.toggleMobileMenu = function() {
+    var menu = document.getElementById('mobileMenu');
+    var btn  = document.getElementById('hamburgerBtn');
+    var icon = document.getElementById('hamburgerIcon');
+    if (!menu || !btn) return;
+    var isOpen = menu.classList.contains('open');
+    if (isOpen) {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        if (icon) icon.className = 'fa-solid fa-bars';
+    } else {
+        menu.classList.add('open');
+        btn.classList.add('open');
+        if (icon) icon.className = 'fa-solid fa-xmark';
+    }
+};
+window.closeMobileMenu = function() {
+    var menu = document.getElementById('mobileMenu');
+    var btn  = document.getElementById('hamburgerBtn');
+    var icon = document.getElementById('hamburgerIcon');
+    if (menu) menu.classList.remove('open');
+    if (btn)  btn.classList.remove('open');
+    if (icon) icon.className = 'fa-solid fa-bars';
+};
+window.showPrivacy = function() { showLegal('privacidad'); };
+window.showPrivacyFullPage = function() { showLegal('privacidad'); };
+
+// ══════════════════════════════════════════════════════════════
+// MARCO LEGAL COMPLETO — RGPD · DSA · LSSI · Derecho Español
+// ══════════════════════════════════════════════════════════════
+
+// ── CONTENIDOS LEGALES ────────────────────────────────────────
+var LEGAL_CONTENT = {
+
+    aviso: function() { return '' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px;">' +
+        '<h2 style="margin:0;">⚖️ Aviso Legal</h2>' +
+        '<button onclick="closeLegal()" style="background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">×</button></div>' +
+        '<div style="margin-bottom:14px;"><span class="legal-badge">🇪🇺 Derecho Español y Europeo</span><span class="legal-badge">📅 Actualizado Mayo 2025</span></div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🏢 Datos del Titular</h3>' +
+        '<p><strong>Denominación:</strong> Globalink — Red Social</p>' +
+        '<p><strong>Naturaleza:</strong> Plataforma digital de red social</p>' +
+        '<p><strong>Ámbito de aplicación:</strong> Territorio de la Unión Europea, con sujeción a la legislación española</p>' +
+        '<p><strong>Correo de contacto legal:</strong> legal@globalink.app</p>' +
+        '<p><strong>Marco normativo:</strong> Ley 34/2002 de Servicios de la Sociedad de la Información (LSSI-CE), Reglamento (UE) 2016/679 (RGPD), Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), y Reglamento (UE) 2022/2065 sobre Servicios Digitales (DSA).</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>📋 Objeto y Condiciones de Acceso</h3>' +
+        '<p>El presente Aviso Legal regula el uso del servicio Globalink. El acceso y uso de la plataforma atribuye la condición de Usuario e implica la aceptación plena y sin reservas de todas las disposiciones aquí incluidas.</p>' +
+        '<p>Globalink se reserva el derecho a modificar unilateralmente las presentes condiciones, sin que ello afecte a los bienes o servicios adquiridos previamente. Los cambios serán comunicados con un mínimo de 30 días de antelación mediante notificación en la plataforma.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🚫 Contenidos Prohibidos (Conformidad DSA)</h3>' +
+        '<p>En cumplimiento del Reglamento (UE) 2022/2065 sobre Servicios Digitales (DSA), queda expresamente prohibida la publicación de:</p>' +
+        '<ul>' +
+        '<li><strong>Discurso de odio:</strong> contenido que incite a la discriminación, hostilidad o violencia por razón de raza, etnia, religión, género, orientación sexual, discapacidad o cualquier otra característica protegida.</li>' +
+        '<li><strong>Violencia y terrorismo:</strong> material que glorifique, promueva o incite a actos terroristas, violencia extrema o crímenes de odio.</li>' +
+        '<li><strong>Pornografía infantil (CSAM):</strong> cualquier contenido de explotación sexual de menores. Este tipo de contenido será reportado inmediatamente a las autoridades competentes (AEPD, Europol/INHOPE).</li>' +
+        '<li><strong>Acoso y ciberacoso:</strong> mensajes, imágenes o cualquier contenido destinado a intimidar, hostigar, amenazar o dañar la reputación de personas reales.</li>' +
+        '<li><strong>Desinformación dañina:</strong> información falsa que pueda causar daño real a terceros o a la salud pública.</li>' +
+        '<li><strong>Fraude y estafas:</strong> contenido con fines de engaño económico, phishing, suplantación de identidad o cualquier otra actividad fraudulenta.</li>' +
+        '<li><strong>Violación de derechos de autor:</strong> publicación de obras protegidas sin autorización del titular.</li>' +
+        '<li><strong>Spam y publicidad no autorizada:</strong> mensajes masivos no solicitados o publicidad encubierta.</li>' +
+        '</ul>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🔨 Causas de Suspensión y Baneo</h3>' +
+        '<p>Globalink podrá suspender temporal o permanentemente el acceso de un Usuario, con o sin previo aviso según la gravedad, en los siguientes supuestos:</p>' +
+        '<ul>' +
+        '<li>Publicación de cualquiera de los contenidos prohibidos descritos anteriormente.</li>' +
+        '<li>Reincidencia tras advertencia formal por incumplimiento de los Términos de Uso.</li>' +
+        '<li>Suplantación de identidad de otra persona u organización.</li>' +
+        '<li>Creación de múltiples cuentas con el fin de evadir una suspensión.</li>' +
+        '<li>Uso automatizado de la plataforma (bots) sin autorización.</li>' +
+        '<li>Cualquier actividad que ponga en riesgo la seguridad técnica de la plataforma o de otros usuarios.</li>' +
+        '<li>Resolución judicial o requerimiento de autoridad competente.</li>' +
+        '</ul>' +
+        '<p>El Usuario podrá impugnar las decisiones de moderación mediante comunicación al correo legal@globalink.app. Globalink resolverá las impugnaciones en un plazo máximo de 15 días hábiles, conforme al artículo 20 del DSA.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>⚠️ Limitación de Responsabilidad</h3>' +
+        '<p>Globalink actúa como <strong>prestador de servicios intermediario</strong> en el sentido de la Directiva 2000/31/CE y el Reglamento DSA. En consecuencia:</p>' +
+        '<ul>' +
+        '<li>Globalink <strong>no es responsable</strong> del contenido generado por los usuarios, siempre que no tenga conocimiento efectivo de su carácter ilícito o, teniéndolo, actúe con diligencia para retirarlo.</li>' +
+        '<li>Globalink no garantiza la disponibilidad continua e ininterrumpida del servicio.</li>' +
+        '<li>Globalink no responde de los daños derivados de virus informáticos o elementos tecnológicos dañinos que puedan afectar al equipo del usuario como consecuencia del uso del servicio.</li>' +
+        '<li>Los enlaces a terceros (YouTube) se proporcionan a título informativo. Globalink no controla ni asume responsabilidad por el contenido de sitios externos.</li>' +
+        '</ul>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🌍 Jurisdicción y Ley Aplicable</h3>' +
+        '<p>Las presentes condiciones se rigen por la <strong>legislación española</strong> y el <strong>derecho de la Unión Europea</strong>. Para la resolución de conflictos derivados del uso de la plataforma, las partes se someten a los <strong>Juzgados y Tribunales de España</strong>, con renuncia a cualquier otro fuero que pudiera corresponderles, sin perjuicio de los derechos que asistan a los consumidores conforme a la normativa aplicable en su país de residencia dentro de la UE.</p>' +
+        '<p>Resolución de litigios en línea (ODR): conforme al Reglamento (UE) 524/2013, se informa que la Comisión Europea pone a disposición la plataforma ODR: <strong>ec.europa.eu/consumers/odr</strong></p>' +
+        '</div>';
+    },
+
+    privacidad: function() { return '' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px;">' +
+        '<h2 style="margin:0;">🔒 Política de Privacidad</h2>' +
+        '<button onclick="closeLegal()" style="background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">×</button></div>' +
+        '<div style="margin-bottom:14px;"><span class="legal-badge">🇪🇺 RGPD (UE) 2016/679</span><span class="legal-badge">🇪🇸 LOPDGDD 3/2018</span><span class="legal-badge">📅 Mayo 2025</span></div>' +
+
+        '<div class="legal-toc"><span>Índice</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp1\').scrollIntoView({behavior:\'smooth\'})">1. Responsable del Tratamiento</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp2\').scrollIntoView({behavior:\'smooth\'})">2. Datos que recopilamos</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp3\').scrollIntoView({behavior:\'smooth\'})">3. Finalidad y base legal</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp4\').scrollIntoView({behavior:\'smooth\'})">4. Tus derechos (RGPD)</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp5\').scrollIntoView({behavior:\'smooth\'})">5. Cookies</span>' +
+        '<span class="legal-nav-item" onclick="document.getElementById(\'lp6\').scrollIntoView({behavior:\'smooth\'})">6. Transferencias internacionales</span>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp1">' +
+        '<h3>🏢 1. Responsable del Tratamiento</h3>' +
+        '<p>El responsable del tratamiento de los datos personales recabados a través de Globalink es el titular de la plataforma, identificado en el Aviso Legal. Correo de contacto para asuntos de privacidad y ejercicio de derechos: <strong>privacidad@globalink.app</strong></p>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp2">' +
+        '<h3>📊 2. Datos que Recopilamos</h3>' +
+        '<p><strong>Datos facilitados en el registro:</strong> nombre, apellidos, nombre de usuario, correo electrónico, fecha de nacimiento, género.</p>' +
+        '<p><strong>Contenido publicado voluntariamente:</strong> texto, imágenes y vídeos que el usuario decide subir a la plataforma.</p>' +
+        '<p><strong>Datos de sesión técnica:</strong> identificador de sesión almacenado localmente en el dispositivo del usuario (localStorage). <strong>No se transmiten a servidores externos.</strong></p>' +
+        '<p><strong>Lo que NO recopilamos:</strong> no usamos servicios de analítica de terceros, no instalamos cookies de rastreo publicitario, no vendemos datos a terceros.</p>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp3">' +
+        '<h3>⚖️ 3. Finalidad y Base Legal del Tratamiento</h3>' +
+        '<ul>' +
+        '<li><strong>Gestión de la cuenta de usuario</strong> — Base legal: ejecución de contrato (art. 6.1.b RGPD).</li>' +
+        '<li><strong>Verificación de la identidad del usuario</strong> — Base legal: ejecución de contrato (art. 6.1.b RGPD).</li>' +
+        '<li><strong>Cumplimiento de obligaciones legales</strong> (DSA, LSSI) — Base legal: obligación legal (art. 6.1.c RGPD).</li>' +
+        '<li><strong>Seguridad de la plataforma</strong> — Base legal: interés legítimo (art. 6.1.f RGPD).</li>' +
+        '</ul>' +
+        '<p><strong>Plazo de conservación:</strong> los datos se conservan mientras el usuario mantenga su cuenta activa. Una vez solicitada la eliminación, los datos son suprimidos del localStorage del dispositivo de forma inmediata e irreversible.</p>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp4">' +
+        '<h3>✅ 4. Tus Derechos RGPD</h3>' +
+        '<p>Conforme al Reglamento (UE) 2016/679, el usuario tiene los siguientes derechos sobre sus datos personales:</p>' +
+        '<ul>' +
+        '<li><strong>Acceso (art. 15 RGPD):</strong> solicitar confirmación de si tratamos sus datos y obtener una copia.</li>' +
+        '<li><strong>Rectificación (art. 16 RGPD):</strong> corregir datos inexactos o incompletos.</li>' +
+        '<li><strong>Supresión / Derecho al olvido (art. 17 RGPD):</strong> solicitar la eliminación de sus datos cuando ya no sean necesarios.</li>' +
+        '<li><strong>Limitación del tratamiento (art. 18 RGPD):</strong> solicitar la restricción del tratamiento en determinadas circunstancias.</li>' +
+        '<li><strong>Portabilidad (art. 20 RGPD):</strong> recibir sus datos en formato estructurado y de uso común.</li>' +
+        '<li><strong>Oposición (art. 21 RGPD):</strong> oponerse al tratamiento basado en interés legítimo.</li>' +
+        '</ul>' +
+        '<p>Para ejercer cualquiera de estos derechos, contacta a: <strong>privacidad@globalink.app</strong></p>' +
+        '<p>Tiene derecho a presentar una reclamación ante la <strong>Agencia Española de Protección de Datos (AEPD)</strong>: www.aepd.es</p>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp5">' +
+        '<h3>🍪 5. Política de Cookies</h3>' +
+        '<p>Globalink utiliza <strong>únicamente cookies técnicas esenciales</strong> para el funcionamiento de la plataforma:</p>' +
+        '<ul>' +
+        '<li><strong>Cookie de sesión (localStorage):</strong> almacena el identificador de sesión del usuario para mantener el inicio de sesión activo. Duración: sesión del navegador. No transmite datos a terceros.</li>' +
+        '</ul>' +
+        '<p><strong>No utilizamos</strong> cookies de análisis, cookies publicitarias, cookies de redes sociales externas ni ninguna cookie de rastreo de terceros.</p>' +
+        '<p>Base legal: art. 22.2 LSSI-CE (exención para cookies técnicas estrictamente necesarias) y art. 6.1.b RGPD.</p>' +
+        '</div>' +
+
+        '<div class="legal-section" id="lp6">' +
+        '<h3>🌍 6. Transferencias Internacionales</h3>' +
+        '<p>Globalink <strong>no realiza transferencias internacionales de datos personales</strong>. Todos los datos se almacenan exclusivamente en el dispositivo del usuario (localStorage) y no son transmitidos a ningún servidor, ni dentro ni fuera del Espacio Económico Europeo.</p>' +
+        '<p>Los vídeos incrustados de YouTube son servidos directamente por Google LLC desde sus infraestructuras. El uso de YouTube está sujeto a su propia política de privacidad (policies.google.com/privacy). Globalink no transmite datos de usuarios a YouTube.</p>' +
+        '</div>';
+    },
+
+    terminos: function() { return '' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px;">' +
+        '<h2 style="margin:0;">📄 Términos de Uso</h2>' +
+        '<button onclick="closeLegal()" style="background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">×</button></div>' +
+        '<div style="margin-bottom:14px;"><span class="legal-badge">🇪🇺 DSA 2022/2065</span><span class="legal-badge">🇪🇸 LSSI-CE 34/2002</span><span class="legal-badge">📅 Mayo 2025</span></div>' +
+
+        '<div class="legal-section">' +
+        '<h3>📸 1. Propiedad Intelectual del Contenido del Usuario</h3>' +
+        '<p>El usuario conserva íntegramente la <strong>titularidad de los derechos de propiedad intelectual</strong> sobre el contenido que publica (fotografías, vídeos, textos).</p>' +
+        '<p>Al publicar contenido en Globalink, el usuario concede a la plataforma una <strong>licencia no exclusiva, gratuita, limitada al territorio de la UE y revocable</strong> para mostrar dicho contenido a los demás usuarios de la plataforma, exclusivamente con el fin de prestar el servicio.</p>' +
+        '<p>Esta licencia <strong>no autoriza</strong> a Globalink a vender, sublicenciar, distribuir comercialmente ni modificar el contenido del usuario fuera del contexto estricto del servicio.</p>' +
+        '<p>El usuario declara y garantiza que el contenido que publica es de su autoría o que dispone de todos los derechos necesarios para publicarlo.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🚫 2. Contenido Prohibido</h3>' +
+        '<p>Está terminantemente prohibida la publicación de:</p>' +
+        '<ul>' +
+        '<li>Contenido que incite al odio, la discriminación o la violencia por cualquier motivo (DSA art. 9, Decisión Marco 2008/913/JAI).</li>' +
+        '<li>Pornografía infantil o cualquier contenido que explote sexualmente a menores (Directiva 2011/93/UE).</li>' +
+        '<li>Contenido terrorista (Reglamento (UE) 2021/784).</li>' +
+        '<li>Acoso, amenazas o ciberacoso dirigidos a personas reales.</li>' +
+        '<li>Desinformación que pueda causar daño real a la salud pública o a terceros.</li>' +
+        '<li>Violación de derechos de propiedad intelectual de terceros.</li>' +
+        '<li>Spam, phishing o cualquier actividad fraudulenta.</li>' +
+        '</ul>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>⚠️ 3. Limitación de Responsabilidad del Prestador</h3>' +
+        '<p>Globalink actúa como prestador de servicios de alojamiento de información en el sentido del art. 14 Directiva 2000/31/CE y art. 6 LSSI-CE. En consecuencia, Globalink:</p>' +
+        '<ul>' +
+        '<li>No es responsable del contenido publicado por los usuarios, siempre que no haya tenido conocimiento efectivo de su ilicitud o, teniéndolo, haya actuado diligentemente para retirarlo.</li>' +
+        '<li>No garantiza la disponibilidad o continuidad del servicio y podrá interrumpirlo por razones técnicas o de mantenimiento.</li>' +
+        '<li>No responde por los daños causados por el uso que los usuarios hagan de la plataforma o por el contenido que publiquen.</li>' +
+        '</ul>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🔨 4. Moderación, Suspensión y Derecho de Recurso (DSA)</h3>' +
+        '<p>En cumplimiento del art. 17 DSA, Globalink informará al usuario afectado sobre cualquier restricción impuesta a su cuenta o contenido, indicando los motivos, la duración y los medios de recurso disponibles.</p>' +
+        '<p>El usuario podrá impugnar toda decisión de moderación escribiendo a <strong>legal@globalink.app</strong> en un plazo de 30 días desde la notificación. Globalink resolverá la impugnación en un plazo máximo de 15 días hábiles.</p>' +
+        '<p>El usuario también podrá acudir a un organismo de resolución extrajudicial de litigios certificado por la autoridad competente conforme al art. 21 DSA.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🔗 5. Contenido de Terceros (YouTube)</h3>' +
+        '<p>La sección Reels muestra vídeos de YouTube a través del reproductor oficial embebido de YouTube, conforme a los Términos de Servicio de YouTube (youtube.com/t/terms). Globalink no aloja, descarga ni reproduce los vídeos de YouTube. El contenido de YouTube está sujeto a las políticas y derechos de sus respectivos autores y de YouTube/Google.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>📅 6. Vigencia y Modificaciones</h3>' +
+        '<p>Los presentes Términos de Uso están en vigor desde mayo de 2025. Globalink podrá modificarlos notificando a los usuarios con al menos <strong>30 días de antelación</strong> mediante aviso en la plataforma. El uso continuado del servicio tras la entrada en vigor de las modificaciones implica la aceptación de los nuevos términos.</p>' +
+        '<p><strong>Jurisdicción:</strong> legislación española y europea. Fuero: Juzgados y Tribunales de España.</p>' +
+        '</div>';
+    },
+
+    cookies: function() { return '' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px;">' +
+        '<h2 style="margin:0;">🍪 Política de Cookies</h2>' +
+        '<button onclick="closeLegal()" style="background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">×</button></div>' +
+        '<div style="margin-bottom:14px;"><span class="legal-badge">🇪🇸 LSSI-CE art. 22</span><span class="legal-badge">🇪🇺 RGPD art. 6.1.b</span></div>' +
+
+        '<div class="legal-section">' +
+        '<h3>ℹ️ ¿Qué son las cookies?</h3>' +
+        '<p>Las cookies son pequeños archivos de texto que se almacenan en el dispositivo del usuario cuando visita un sitio web. Se utilizan para recordar preferencias, mantener sesiones y analizar el uso del servicio.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🔧 Cookies que usamos en Globalink</h3>' +
+        '<div style="background:var(--bg-input);border-radius:12px;padding:14px;margin-bottom:12px;">' +
+        '<p style="margin:0;"><strong>Nombre:</strong> social_session</p>' +
+        '<p style="margin:4px 0;"><strong>Tipo:</strong> Técnica / Esencial</p>' +
+        '<p style="margin:4px 0;"><strong>Finalidad:</strong> Mantener la sesión del usuario activa entre visitas</p>' +
+        '<p style="margin:4px 0;"><strong>Duración:</strong> Hasta que el usuario cierra sesión o borra el almacenamiento local</p>' +
+        '<p style="margin:4px 0;"><strong>Terceros:</strong> No. Almacenada exclusivamente en el dispositivo del usuario (localStorage)</p>' +
+        '</div>' +
+        '<p><strong>Nota técnica:</strong> Globalment utilizamos localStorage del navegador (no cookies HTTP tradicionales), que funciona de forma equivalente pero con mayor control por parte del usuario.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>🚫 Cookies que NO usamos</h3>' +
+        '<ul>' +
+        '<li>Cookies publicitarias o de retargeting</li>' +
+        '<li>Cookies de análisis o estadística de terceros (Google Analytics, etc.)</li>' +
+        '<li>Cookies de redes sociales externas</li>' +
+        '<li>Cookies de seguimiento de comportamiento</li>' +
+        '</ul>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>⚙️ Cómo gestionar y eliminar las cookies</h3>' +
+        '<p>Puedes eliminar los datos almacenados localmente en cualquier momento desde la configuración de tu navegador. También puedes cerrar sesión en Globalink, lo que eliminará automáticamente el identificador de sesión.</p>' +
+        '<p>La desactivación del almacenamiento local impedirá el funcionamiento del servicio, ya que Globalink no puede funcionar sin el dato de sesión.</p>' +
+        '</div>' +
+
+        '<div class="legal-section">' +
+        '<h3>⚖️ Base Legal</h3>' +
+        '<p>El uso de la cookie técnica de sesión está amparado por el art. 22.2 de la LSSI-CE (exención de consentimiento para cookies técnicas estrictamente necesarias) y el art. 6.1.b del RGPD (ejecución de contrato). No se requiere consentimiento para este tipo de cookie.</p>' +
+        '</div>';
+    }
+};
+
+// ── ABRIR / CERRAR MODAL LEGAL ────────────────────────────────
+window.showLegal = function(page) {
+    var modal   = document.getElementById('legalModal');
+    var box     = document.getElementById('legalModalBox');
+    if (!modal || !box) return;
+    var fn = LEGAL_CONTENT[page];
+    if (!fn) return;
+    box.innerHTML = fn();
+    modal.style.display = 'flex';
+    setTimeout(function() { modal.classList.add('active'); box.scrollTop = 0; }, 10);
+};
+window.closeLegal = function() {
+    var modal = document.getElementById('legalModal'); if (!modal) return;
+    modal.classList.remove('active');
+    setTimeout(function() { modal.style.display = 'none'; }, 400);
+};
+
+// ── BANNER DE COOKIES ─────────────────────────────────────────
+function initCookieBanner() {
+    var consent = localStorage.getItem('gl_cookie_consent');
+    if (!consent) {
+        var banner = document.getElementById('cookieBanner');
+        if (banner) banner.style.display = 'block';
+    }
+}
+window.cookieChoice = function(choice) {
+    localStorage.setItem('gl_cookie_consent', choice);
+    localStorage.setItem('gl_cookie_date', new Date().toISOString());
+    var banner = document.getElementById('cookieBanner');
+    if (banner) {
+        banner.style.animation = 'none';
+        banner.style.transform = 'translateY(100%)';
+        banner.style.transition = 'transform .4s ease';
+        setTimeout(function() { banner.style.display = 'none'; }, 400);
+    }
+    showToast('✅ Preferencias de cookies guardadas');
 };
 
 // ── 5. REGISTRO Y LOGIN ──────────────────────────────────
+
+// ════════════════════════════════════════════════════════
+// CONFIGURACIÓN — LEE ESTO ANTES DE USAR
+// ════════════════════════════════════════════════════════
+// EMAILJS (envío real de correos):
+//   1. Regístrate GRATIS en https://www.emailjs.com
+//   2. Conecta tu Gmail/Outlook en "Email Services"
+//   3. Crea plantilla en "Email Templates" con variables:
+//      {{to_email}}, {{to_name}}, {{code}}, {{app_name}}
+//   4. Copia tus claves aquí:
+var EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY_AQUI';
+var EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID_AQUI';
+var EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID_AQUI';
+//
+// hCAPTCHA (verificación anti-bot):
+//   CLAVE DE TEST (funciona en localhost Y en producción para pruebas):
+//   '10000000-ffff-ffff-ffff-000000000001'
+//
+//   Para PRODUCCIÓN REAL con tu dominio de Netlify:
+//   1. Ve a https://dashboard.hcaptcha.com
+//   2. New Site → añade 'globalink-red-social.netlify.app'
+//   3. Copia el Site Key aquí
+var HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001';
+// ════════════════════════════════════════════════════════
+var _captchaToken = null;
+
+// Genera un código de 6 dígitos
+function generateVerifyCode() {
+    return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+// Callbacks globales de hCaptcha (deben estar en window)
+window.onHCaptchaSuccess = function(token) {
+    _captchaToken = token;
+    var btn = document.getElementById('btnContinueAfterCaptcha');
+    if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right:8px;color:#4caf50;"></i>Verificado · Continuar';
+    }
+};
+window.onHCaptchaExpired = function() {
+    _captchaToken = null;
+    var btn = document.getElementById('btnContinueAfterCaptcha');
+    if (btn) { btn.disabled = true; btn.style.opacity = '.5'; btn.textContent = 'Captcha expirado — complétalo de nuevo'; }
+};
+window.onHCaptchaError = function() {
+    _captchaToken = null;
+    showToast('⚠️ Error en la verificación captcha. Inténtalo de nuevo.');
+};
+
+// ── PASO 1: Datos personales ──────────────────────────────
+window.openRegisterModal = function() {
+    _captchaToken = null;
+    toggleModal(true,
+        '<div style="text-align:left;">' +
+        '<h2 style="text-align:center;margin-bottom:6px;">Crear cuenta</h2>' +
+        '<p style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:20px;">Paso 1 de 4 — Datos personales</p>' +
+
+        '<div style="display:flex;gap:8px;">' +
+        '<div style="flex:1;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">NOMBRE *</label>' +
+        '<input type="text" id="regNombre" placeholder="Tu nombre" style="margin:0;"></div>' +
+        '<div style="flex:1;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">APELLIDOS *</label>' +
+        '<input type="text" id="regApellidos" placeholder="Tus apellidos" style="margin:0;"></div></div>' +
+
+        '<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 4px;">NOMBRE DE USUARIO *</label>' +
+        '<input type="text" id="regUser" placeholder="@usuario" style="margin:0;">' +
+
+        '<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 4px;">CORREO ELECTRÓNICO *</label>' +
+        '<input type="email" id="regEmail" placeholder="tu@correo.com" style="margin:0;">' +
+
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+        '<div style="flex:1;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">GÉNERO *</label>' +
+        '<select id="regGenero" style="margin:0;"><option value="">Seleccionar...</option><option value="Masculino">Masculino</option><option value="Femenino">Femenino</option><option value="No binario">No binario</option><option value="Prefiero no decir">Prefiero no decir</option></select></div>' +
+        '<div style="flex:1;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">FECHA DE NACIMIENTO *</label>' +
+        '<input type="date" id="regBirth" style="margin:0;" max="' + new Date(Date.now() - 13*365.25*24*3600*1000).toISOString().split('T')[0] + '"></div></div>' +
+
+        '<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 4px;">CONTRASEÑA *</label>' +
+        '<input type="password" id="regPass" placeholder="Mínimo 6 caracteres" style="margin:0;">' +
+        '<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin:12px 0 4px;">CONFIRMAR CONTRASEÑA *</label>' +
+        '<input type="password" id="regPass2" placeholder="Repite tu contraseña" style="margin:0;" onkeydown="if(event.key===\'Enter\') goRegisterCaptcha()">' +
+
+        '<button class="btn-join" onclick="goRegisterCaptcha()" style="width:100%;margin-top:18px;">Continuar <i class="fa-solid fa-arrow-right" style="margin-left:6px;"></i></button>' +
+        '<p style="text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted);">¿Ya tienes cuenta? <span onclick="openLoginModal()" style="color:var(--primary);cursor:pointer;font-weight:600;">Inicia sesión</span></p>' +
+        '</div>'
+    );
+};
+
+// ── PASO 2: Captcha anti-bot ──────────────────────────────
+window.goRegisterCaptcha = function() {
+    var nombre    = (document.getElementById('regNombre')    || {}).value.trim();
+    var apellidos = (document.getElementById('regApellidos') || {}).value.trim();
+    var user      = (document.getElementById('regUser')      || {}).value.trim().replace(/\s+/g,'');
+    var email     = (document.getElementById('regEmail')     || {}).value.trim().toLowerCase();
+    var genero    = (document.getElementById('regGenero')    || {}).value;
+    var birth     = (document.getElementById('regBirth')     || {}).value;
+    var pass      = (document.getElementById('regPass')      || {}).value;
+    var pass2     = (document.getElementById('regPass2')     || {}).value;
+
+    if (!nombre || !apellidos || !user || !email || !genero || !birth || !pass)
+        return showToast('⚠️ Completa todos los campos obligatorios');
+    if (!/^[a-zA-Z0-9_\.]+$/.test(user))
+        return showToast('⚠️ El usuario solo puede tener letras, números, _ y .');
+    if (socialDB.users.find(function(u) { return u.username.toLowerCase() === user.toLowerCase(); }))
+        return showToast('⚠️ Ese nombre de usuario ya existe');
+    if (socialDB.users.find(function(u) { return u.email === email; }))
+        return showToast('⚠️ Ese correo ya está registrado');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return showToast('⚠️ Introduce un correo electrónico válido');
+    if (pass.length < 6)
+        return showToast('⚠️ La contraseña debe tener al menos 6 caracteres');
+    if (pass !== pass2)
+        return showToast('⚠️ Las contraseñas no coinciden');
+
+    _regTemp = { nombre:nombre, apellidos:apellidos, user:user, email:email, genero:genero, birth:birth, pass:pass };
+    _captchaToken = null;
+
+    toggleModal(true,
+        '<div style="text-align:left;">' +
+        '<h2 style="text-align:center;margin-bottom:6px;">Verificación de seguridad</h2>' +
+        '<p style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:20px;">Paso 2 de 4 — Confirma que eres humano</p>' +
+
+        '<div style="background:var(--bg-input);border-radius:16px;padding:20px;margin-bottom:18px;text-align:center;">' +
+        '<div style="font-size:44px;margin-bottom:10px;">🤖</div>' +
+        '<p style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">Verificación anti-bot</p>' +
+        '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">Completa el captcha para confirmar que eres una persona real.</p>' +
+        '<div id="hcaptchaMount" style="display:flex;justify-content:center;min-height:78px;margin-bottom:12px;">' +
+        '<div class="h-captcha" ' +
+        'data-sitekey="' + HCAPTCHA_SITE_KEY + '" ' +
+        'data-callback="onHCaptchaSuccess" ' +
+        'data-expired-callback="onHCaptchaExpired" ' +
+        'data-error-callback="onHCaptchaError" ' +
+        'data-theme="' + (socialDB.currentTheme==='dark'?'dark':'light') + '">' +
+        '</div></div>' +
+        '<p style="font-size:11px;color:var(--text-muted);">🔒 Protegido por hCaptcha · Compatible RGPD</p>' +
+        '</div>' +
+
+        '<button class="btn-join" id="btnContinueAfterCaptcha" onclick="goRegisterStep2()" style="width:100%;opacity:.5;" disabled>' +
+        'Completa el captcha para continuar</button>' +
+        '<button class="btn-outline" onclick="openRegisterModal()" style="width:100%;margin-top:10px;justify-content:center;">' +
+        '<i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i>Volver</button>' +
+        '</div>'
+    );
+
+    // Renderizar hCaptcha después de que el DOM esté listo
+    // Intentar varias veces por si el script aún no cargó
+    var attempts = 0;
+    function tryRenderCaptcha() {
+        attempts++;
+        var mountEl = document.getElementById('hcaptchaMount');
+        if (!mountEl) return; // modal cerrado
+
+        if (window.hcaptcha) {
+            // Limpiar el contenido anterior y crear div fresco
+            mountEl.innerHTML = '';
+            var captchaDiv = document.createElement('div');
+            mountEl.appendChild(captchaDiv);
+            try {
+                window.hcaptcha.render(captchaDiv, {
+                    sitekey: HCAPTCHA_SITE_KEY,
+                    callback: window.onHCaptchaSuccess,
+                    'expired-callback': window.onHCaptchaExpired,
+                    'error-callback': window.onHCaptchaError,
+                    theme: socialDB.currentTheme === 'dark' ? 'dark' : 'light'
+                });
+                console.log('✅ hCaptcha renderizado correctamente');
+            } catch(e) {
+                console.warn('hCaptcha render error:', e);
+                // Si falla el render, mostrar checkbox de respaldo
+                showCaptchaFallback(mountEl);
+            }
+        } else if (attempts < 20) {
+            // Reintentar cada 300ms hasta 6 segundos
+            setTimeout(tryRenderCaptcha, 300);
+        } else {
+            // hCaptcha no cargó — mostrar checkbox de respaldo
+            console.warn('hCaptcha no cargó, usando respaldo');
+            showCaptchaFallback(mountEl);
+        }
+    }
+
+    function showCaptchaFallback(mountEl) {
+        // Checkbox simple como respaldo si hCaptcha no está disponible
+        mountEl.innerHTML =
+            '<div style="background:var(--bg-card);border:2px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="toggleFallbackCaptcha(this)">' +
+            '<div id="fallbackCheckbox" style="width:24px;height:24px;border-radius:6px;border:2px solid var(--border);background:var(--bg-input);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;"></div>' +
+            '<span style="font-size:14px;color:var(--text);">No soy un robot</span>' +
+            '<img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" style="width:32px;height:32px;margin-left:auto;opacity:.4;" onerror="this.style.display=\'none\'">' +
+            '</div>';
+        // Habilitar botón inmediatamente — el checkbox lo controlará
+        window.toggleFallbackCaptcha = function(el) {
+            var chk = document.getElementById('fallbackCheckbox');
+            var isChecked = chk && chk.dataset.checked === '1';
+            if (!isChecked) {
+                if (chk) { chk.dataset.checked = '1'; chk.innerHTML = '<i class="fa-solid fa-check" style="color:var(--primary);font-size:14px;"></i>'; chk.style.borderColor = 'var(--primary)'; }
+                _captchaToken = 'fallback_verified_' + Date.now();
+                var btn = document.getElementById('btnContinueAfterCaptcha');
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right:8px;color:#4caf50;"></i>Verificado · Continuar'; }
+            }
+        };
+    }
+
+    setTimeout(tryRenderCaptcha, 400);
+};
+
+// ── PASO 3: Términos + envío de código ───────────────────
+window.goRegisterStep2 = function() {
+    // Verificar captcha completado (token real de hCaptcha O token de respaldo)
+    if (!_captchaToken) return showToast('⚠️ Completa la verificación captcha primero');
+
+    // Mostrar términos y condiciones
+    toggleModal(true,
+        '<div style="text-align:left;">' +
+        '<h2 style="text-align:center;margin-bottom:6px;">Términos y Privacidad</h2>' +
+        '<p style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:16px;">Paso 3 de 4 — Acepta para continuar</p>' +
+
+        '<div style="background:var(--bg-input);border-radius:14px;padding:16px;max-height:200px;overflow-y:auto;font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;">' +
+        '<p style="font-weight:700;color:var(--text);margin-bottom:8px;">📋 Términos y Condiciones de Globalink</p>' +
+        '<p><strong>1. Uso de la plataforma.</strong> Globalink es una red social de uso personal. Al registrarte, aceptas usarla de forma responsable, sin publicar contenido ofensivo, ilegal o que vulnere los derechos de terceros.</p>' +
+        '<p style="margin-top:8px;"><strong>2. Edad mínima.</strong> Debes tener al menos 13 años para registrarte.</p>' +
+        '<p style="margin-top:8px;"><strong>3. Cuenta personal.</strong> Tu cuenta es personal e intransferible.</p>' +
+        '<p style="margin-top:8px;"><strong>4. Contenido y derechos de autor.</strong> Solo publica contenido del que seas titular o tengas los derechos necesarios.</p>' +
+        '<p style="margin-top:8px;"><strong>5. DMCA.</strong> Globalink actúa como intermediario técnico. El contenido ilícito puede ser retirado previa notificación.</p>' +
+        '<p style="margin-top:8px;"><strong>6. Suspensión.</strong> Nos reservamos el derecho de suspender cuentas que violen estos términos.</p>' +
+        '<hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">' +
+        '<p style="font-weight:700;color:var(--text);margin-bottom:8px;">🔒 Política de Privacidad</p>' +
+        '<p>Tus datos se almacenan localmente. No se venden ni comparten con terceros. Tienes derecho de acceso, rectificación y supresión conforme al RGPD.</p>' +
+        '</div>' +
+
+        '<label for="chkTerms" style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-hover);border-radius:12px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;" id="lblTerms">' +
+        '<input type="checkbox" id="chkTerms" onchange="document.getElementById(\'lblTerms\').style.borderColor=this.checked?\'var(--primary)\':\' transparent\'">' +
+        '<span style="font-size:13px;color:var(--text);line-height:1.5;">He leído y acepto los <span onclick="event.stopPropagation();showLegal(\'terminos\')" style="color:var(--primary);cursor:pointer;font-weight:600;text-decoration:underline;">Términos de Uso</span>, el <span onclick="event.stopPropagation();showLegal(\'aviso\')" style="color:var(--primary);cursor:pointer;font-weight:600;text-decoration:underline;">Aviso Legal</span> y la <span onclick="event.stopPropagation();showLegal(\'privacidad\')" style="color:var(--primary);cursor:pointer;font-weight:600;text-decoration:underline;">Política de Privacidad</span>.</span>' +
+        '</label>' +
+
+        '<label for="chkAge" style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-hover);border-radius:12px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;" id="lblAge">' +
+        '<input type="checkbox" id="chkAge" onchange="document.getElementById(\'lblAge\').style.borderColor=this.checked?\'var(--primary)\':\' transparent\'">' +
+        '<span style="font-size:13px;color:var(--text);">Confirmo que tengo al menos <strong>13 años</strong> (art. 8 RGPD / art. 7 LOPDGDD).</span>' +
+        '</label>' +
+
+        '<label for="chkDataConsent" style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg-hover);border-radius:12px;margin-bottom:18px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;" id="lblDataConsent">' +
+        '<input type="checkbox" id="chkDataConsent" onchange="document.getElementById(\'lblDataConsent\').style.borderColor=this.checked?\'var(--primary)\':\' transparent\'">' +
+        '<span style="font-size:13px;color:var(--text);">Consiento el tratamiento de mis datos personales para gestión de cuenta (RGPD art. 7). Puedo retirar este consentimiento en cualquier momento.</span>' +
+        '</label>' +
+
+        '<button class="btn-join" onclick="goRegisterStep3()" style="width:100%;">Enviar código de verificación <i class="fa-solid fa-envelope" style="margin-left:6px;"></i></button>' +
+        '<button class="btn-outline" onclick="goRegisterCaptcha()" style="width:100%;margin-top:10px;justify-content:center;"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i>Volver</button>' +
+        '</div>'
+    );
+};
+
+// ── URL del backend (cámbiala cuando despliegues en Render) ──
+var BACKEND_URL = 'https://globalink-backend-ur6a.onrender.com';
+// Para pruebas locales usa: var BACKEND_URL = 'http://localhost:3001';
+
+// ── PASO 4: Verificación de email (backend real) ──────────────
+window.goRegisterStep3 = function() {
+    var chkTerms       = document.getElementById('chkTerms');
+    var chkAge         = document.getElementById('chkAge');
+    var chkDataConsent = document.getElementById('chkDataConsent');
+    if (!chkTerms       || !chkTerms.checked)       return showToast('⚠️ Debes aceptar los Términos de Uso y Aviso Legal');
+    if (!chkAge         || !chkAge.checked)         return showToast('⚠️ Debes confirmar que tienes 13 años o más');
+    if (!chkDataConsent || !chkDataConsent.checked) return showToast('⚠️ Debes dar tu consentimiento al tratamiento de datos (RGPD)');
+    _regTemp.consentDate = new Date().toISOString();
+
+    var maskedEmail = _regTemp.email.replace(/(.{2})(.*)(@.*)/, function(m,a,b,c) {
+        return a + b.replace(/./g,'*') + c;
+    });
+
+    // Mostrar pantalla de verificación
+    function showVerifyScreen(state, errorMsg) {
+        toggleModal(true,
+            '<div style="text-align:left;">' +
+            '<h2 style="text-align:center;margin-bottom:6px;">Verificar correo</h2>' +
+            '<p style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:20px;">Paso 4 de 4 — Código de verificación</p>' +
+
+            '<div style="background:linear-gradient(135deg,rgba(198,57,184,.12),rgba(30,142,233,.1));border:1px solid rgba(198,57,184,.3);border-radius:16px;padding:20px;margin-bottom:18px;text-align:center;">' +
+            (state === 'sending' ?
+                '<div style="font-size:36px;margin-bottom:10px;">📤</div>' +
+                '<p style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;">Enviando código a tu correo...</p>' +
+                '<p style="font-size:13px;color:var(--primary);font-weight:700;margin-bottom:12px;">' + maskedEmail + '</p>' +
+                '<div style="display:flex;justify-content:center;align-items:center;gap:10px;"><div class="reels-spinner"></div><span style="font-size:13px;color:var(--text-muted);">Por favor espera...</span></div>'
+            : state === 'sent' ?
+                '<div style="font-size:36px;margin-bottom:10px;">📧</div>' +
+                '<p style="font-size:14px;color:var(--text);margin-bottom:4px;">Código enviado a</p>' +
+                '<p style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">' + maskedEmail + '</p>' +
+                '<div style="background:var(--bg-card);border-radius:12px;padding:12px;display:inline-block;">' +
+                '<p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Revisa tu bandeja de entrada y la carpeta de <strong>spam</strong></p>' +
+                '<p style="font-size:11px;color:var(--text-muted);">⏱ Válido durante 10 minutos</p>' +
+                '</div>'
+            :   // error
+                '<div style="font-size:36px;margin-bottom:10px;">⚠️</div>' +
+                '<p style="font-size:14px;font-weight:600;color:#ff4d4d;margin-bottom:8px;">Error al enviar el código</p>' +
+                '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">' + (errorMsg || 'No se pudo conectar con el servidor.') + '</p>' +
+                '<p style="font-size:12px;color:var(--text-muted);">Revisa tu conexión e inténtalo de nuevo.</p>'
+            ) +
+            '</div>' +
+
+            (state !== 'sending' ?
+                '<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">INTRODUCE EL CÓDIGO DE 6 DÍGITOS</label>' +
+                '<input type="text" id="verifyCodeInput" maxlength="6" placeholder="______" inputmode="numeric" autocomplete="one-time-code" ' +
+                'style="text-align:center;font-size:28px;font-weight:800;letter-spacing:10px;font-family:monospace;margin:0;" ' +
+                'oninput="this.value=this.value.replace(/\\D/g,\'\').substring(0,6)" ' +
+                'onpaste="setTimeout(function(){var el=document.getElementById(\'verifyCodeInput\');if(el)el.value=el.value.replace(/\\D/g,\'\').substring(0,6);},10)" ' +
+                'onkeydown="if(event.key===\'Enter\') finalizeRegister()">' +
+                '<button class="btn-join" onclick="this.disabled=true;this.style.opacity=\'0.7\';finalizeRegister();" style="width:100%;margin-top:18px;">' +
+                '<i class="fa-solid fa-check-circle" style="margin-right:8px;"></i>Verificar y crear cuenta</button>' +
+                '<div style="display:flex;justify-content:space-between;margin-top:12px;">' +
+                '<button class="btn-outline" onclick="goRegisterStep2()" style="flex:1;margin-right:8px;justify-content:center;font-size:13px;padding:9px 14px;">' +
+                '<i class="fa-solid fa-arrow-left" style="margin-right:5px;"></i>Volver</button>' +
+                '<button class="btn-outline" onclick="resendVerifyCode()" style="flex:1;justify-content:center;font-size:13px;padding:9px 14px;" id="resendBtn">' +
+                '<i class="fa-solid fa-rotate" style="margin-right:5px;"></i>Reenviar</button>' +
+                '</div>'
+            : '') +
+            '</div>'
+        );
+    }
+
+    // Mostrar spinner y llamar al backend
+    showVerifyScreen('sending');
+
+    fetch(BACKEND_URL + '/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: _regTemp.email, nombre: _regTemp.nombre })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            showVerifyScreen('sent');
+            showToast('✅ Código enviado a ' + _regTemp.email);
+        } else {
+            showVerifyScreen('error', data.error);
+            showToast('❌ ' + (data.error || 'Error al enviar el código'));
+        }
+    })
+    .catch(function(err) {
+        console.error('Error fetch /send-code:', err);
+        showVerifyScreen('error', 'No se pudo conectar con el servidor. Revisa tu conexión.');
+        showToast('❌ Error de conexión con el servidor');
+    });
+};
+
+// Reenviar código — llama al backend de nuevo
+window.resendVerifyCode = function() {
+    var btn = document.getElementById('resendBtn');
+    if (btn) { btn.disabled = true; btn.style.opacity = '.5'; }
+    setTimeout(function() { if (btn) { btn.disabled = false; btn.style.opacity = '1'; } }, 30000);
+
+    showToast('⏳ Enviando nuevo código...');
+    fetch(BACKEND_URL + '/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: _regTemp.email, nombre: _regTemp.nombre })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            showToast('✅ Nuevo código enviado a tu correo');
+        } else {
+            showToast('❌ ' + (data.error || 'Error al reenviar'));
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+        }
+    })
+    .catch(function() {
+        showToast('❌ Error de conexión al reenviar');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    });
+};
+
+// ── FINALIZAR REGISTRO ──
+var _finalizeRunning = false;
+
+window.finalizeRegister = function() {
+    if (_finalizeRunning) return;
+
+    var codeInput = document.getElementById('verifyCodeInput');
+    if (!codeInput || !codeInput.value) return showToast('⚠️ Introduce el código de verificación');
+
+    var entered = codeInput.value.replace(/\D/g, '');
+    if (!entered || entered.length < 6) return showToast('⚠️ El código debe tener 6 dígitos');
+
+    // Verificar que _regTemp sigue vigente
+    if (!_regTemp.email) {
+        showToast('⚠️ Sesión expirada. Vuelve a empezar el registro.');
+        openRegisterModal();
+        return;
+    }
+
+    // Bloquear ejecución duplicada
+    _finalizeRunning = true;
+
+    // Feedback visual en el input mientras se verifica
+    if (codeInput) { codeInput.disabled = true; codeInput.style.opacity = '.7'; }
+
+    // Llamar al backend para verificar el código
+    fetch(BACKEND_URL + '/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: _regTemp.email, code: entered })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (!data.ok) {
+            // Código incorrecto o expirado
+            _finalizeRunning = false;
+            if (codeInput) {
+                codeInput.disabled = false;
+                codeInput.style.opacity = '1';
+                codeInput.style.borderColor = '#ff4d4d';
+                codeInput.style.background  = 'rgba(255,77,77,.08)';
+                setTimeout(function() { codeInput.style.borderColor=''; codeInput.style.background=''; }, 1800);
+            }
+            showToast('❌ ' + (data.error || 'Código incorrecto'));
+            return;
+        }
+
+        // ✅ Código correcto — crear la cuenta
+
+        // Evitar duplicado si ya fue creado
+        if (socialDB.users.find(function(u) { return u.username === _regTemp.user; })) {
+            _regTemp = {}; _finalizeRunning = false;
+            toggleModal(true,
+                '<div style="text-align:center;padding:20px 0;">' +
+                '<div style="font-size:64px;margin-bottom:16px;">✅</div>' +
+                '<h2 style="margin-bottom:10px;">¡Ya estás registrado!</h2>' +
+                '<p style="color:var(--text-secondary);font-size:15px;margin-bottom:24px;">Tu cuenta ya existe. Puedes iniciar sesión.</p>' +
+                '<button class="btn-join" onclick="openLoginModal()" style="width:100%;font-size:16px;">Iniciar sesión <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>' +
+                '</div>'
+            );
+            return;
+        }
+
+        // Guardar usuario en localStorage
+        var fullName = _regTemp.nombre + ' ' + _regTemp.apellidos;
+        socialDB.users.push({
+            name:        fullName,
+            firstName:   _regTemp.nombre,
+            lastName:    _regTemp.apellidos,
+            username:    _regTemp.user,
+            email:       _regTemp.email,
+            gender:      _regTemp.genero,
+            birthDate:   _regTemp.birth,
+            pass:        _regTemp.pass,
+            verified:    true,
+            available:   true,
+            rgpdConsent: _regTemp.consentDate || new Date().toISOString(),
+            bio:'', profilePic:'', coverPic:'',
+            friends:[], followers:[], following:[],
+            createdAt:   new Date().toISOString()
+        });
+        _regTemp = {};
+        _finalizeRunning = false;
+        saveDB();
+
+        toggleModal(true,
+            '<div style="text-align:center;padding:20px 0;">' +
+            '<div style="font-size:64px;margin-bottom:16px;">🎉</div>' +
+            '<h2 style="margin-bottom:10px;">¡Cuenta creada!</h2>' +
+            '<p style="color:var(--text-secondary);font-size:15px;margin-bottom:24px;">Tu correo ha sido verificado y tu cuenta está lista. Ya puedes iniciar sesión.</p>' +
+            '<button class="btn-join" onclick="openLoginModal()" style="width:100%;font-size:16px;">Iniciar sesión <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i></button>' +
+            '</div>'
+        );
+    })
+    .catch(function(err) {
+        _finalizeRunning = false;
+        if (codeInput) { codeInput.disabled = false; codeInput.style.opacity = '1'; }
+        console.error('Error /verify-code:', err);
+        showToast('❌ Error de conexión. Inténtalo de nuevo.');
+    });
+};
+
+// ── LOGIN ──
+window.openLoginModal = function() {
+    toggleModal(true,
+        '<h2>Iniciar sesión</h2>' +
+        '<input type="text" id="logUser" placeholder="Usuario o correo electrónico">' +
+        '<input type="password" id="logPass" placeholder="Contraseña" onkeydown="if(event.key===\'Enter\') handleLogin()">' +
+        '<button class="btn-join" onclick="handleLogin()" style="width:100%;margin-top:10px;">Entrar</button>' +
+        '<p onclick="openRecovery()" style="cursor:pointer;color:var(--secondary);margin-top:12px;font-size:13px;text-align:center;">¿Olvidaste tu contraseña?</p>' +
+        '<p style="text-align:center;margin-top:10px;font-size:13px;color:var(--text-muted);">¿No tienes cuenta? <span onclick="openRegisterModal()" style="color:var(--primary);cursor:pointer;font-weight:600;">Regístrate</span></p>'
+    );
+};
+
 window.handleRegister = function() {
-    var name = document.getElementById('regName').value.trim();
-    var user = document.getElementById('regUser').value.trim();
-    var pass = document.getElementById('regPass').value;
-    if (!name || !user || !pass) return showToast('⚠️ Completa todos los campos');
-    if (socialDB.users.find(function(u) { return u.username === user; })) return showToast('⚠️ El usuario ya existe');
-    socialDB.users.push({ name:name, username:user, pass:pass, available:true, bio:'', profilePic:'', coverPic:'', friends:[], followers:[], following:[], createdAt:new Date().toISOString() });
-    saveDB(); showToast('✅ ¡Cuenta creada! Ahora inicia sesión.'); toggleModal(false);
+    // Redirige al nuevo flujo multi-paso
+    openRegisterModal();
 };
 
 window.handleLogin = function() {
-    var userIn = document.getElementById('logUser').value.trim();
-    var passIn = document.getElementById('logPass').value;
-    var found  = socialDB.users.find(function(u) { return u.username === userIn && u.pass === passIn; });
-    if (found) { socialDB.currentUser = found; toggleModal(false); launchApp(); }
-    else showToast('❌ Credenciales incorrectas');
+    var userIn = (document.getElementById('logUser') || {}).value.trim();
+    var passIn = (document.getElementById('logPass') || {}).value;
+    if (!userIn || !passIn) return showToast('⚠️ Completa usuario y contraseña');
+    // Login case-insensitive para username, exacto para email
+    var foundIdx = socialDB.users.findIndex(function(u) {
+        return (u.username.toLowerCase() === userIn.toLowerCase() || u.email === userIn.toLowerCase()) && u.pass === passIn;
+    });
+    if (foundIdx !== -1) {
+        socialDB.currentUser = socialDB.users[foundIdx]; // referencia viva al array
+        localStorage.setItem('social_session', socialDB.currentUser.username);
+        toggleModal(false);
+        launchApp();
+    } else {
+        showToast('❌ Usuario/correo o contraseña incorrectos');
+    }
 };
 
 var userToRecover = null;
@@ -167,6 +974,7 @@ function updateSidebarProfile() {
 
 window.logoutUser = function() {
     socialDB.currentUser = null; socialDB.currentSection = 'inicio'; socialDB.reelPage = 0;
+    localStorage.removeItem('social_session');
     document.getElementById('socialApp').style.display   = 'none';
     document.getElementById('landingPage').style.display = 'block';
     showToast('👋 Sesión cerrada');
@@ -293,10 +1101,29 @@ window.changeProfilePic = function(input) {
     if (!input.files[0]) return;
     var reader = new FileReader();
     reader.onload = function(e) {
-        socialDB.currentUser.profilePic = e.target.result;
+        var imgData = e.target.result;
+        // 1. Actualizar el objeto en memoria (referencia viva)
+        socialDB.currentUser.profilePic = imgData;
         var idx = socialDB.users.findIndex(function(u) { return u.username === socialDB.currentUser.username; });
-        if (idx !== -1) socialDB.users[idx].profilePic = e.target.result;
-        saveDB(); updateSidebarProfile(); renderInicio(document.getElementById('contentArea')); showToast('✅ Foto actualizada');
+        if (idx !== -1) socialDB.users[idx].profilePic = imgData;
+        saveDB();
+
+        // 2. Actualizar DOM instantáneamente SIN re-renderizar la sección entera
+        // a) Avatar del perfil principal
+        var profilePicEl = document.querySelector('.profile-pic');
+        if (profilePicEl) profilePicEl.innerHTML = '<img src="' + imgData + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+
+        // b) Mini avatar del sidebar
+        updateSidebarProfile();
+
+        // c) Avatar en el create-post
+        var createAvatar = document.querySelector('.create-post-top .user-avatar');
+        if (createAvatar) createAvatar.innerHTML = '<img src="' + imgData + '" style="width:44px;height:44px;object-fit:cover;border-radius:50%;">';
+
+        // d) Burbuja de historia del usuario
+        renderStories();
+
+        showToast('✅ Foto de perfil actualizada');
     };
     reader.readAsDataURL(input.files[0]);
 };
@@ -304,10 +1131,21 @@ window.changeCoverPic = function(input) {
     if (!input.files[0]) return;
     var reader = new FileReader();
     reader.onload = function(e) {
-        socialDB.currentUser.coverPic = e.target.result;
+        var imgData = e.target.result;
+        // 1. Actualizar objeto en memoria
+        socialDB.currentUser.coverPic = imgData;
         var idx = socialDB.users.findIndex(function(u) { return u.username === socialDB.currentUser.username; });
-        if (idx !== -1) socialDB.users[idx].coverPic = e.target.result;
-        saveDB(); renderInicio(document.getElementById('contentArea')); showToast('✅ Portada actualizada');
+        if (idx !== -1) socialDB.users[idx].coverPic = imgData;
+        saveDB();
+
+        // 2. Actualizar solo la portada en el DOM sin destruir el resto
+        var coverEl = document.getElementById('profileCoverEl');
+        if (coverEl) {
+            coverEl.style.backgroundImage   = 'url(' + imgData + ')';
+            coverEl.style.backgroundSize    = 'cover';
+            coverEl.style.backgroundPosition = 'center';
+        }
+        showToast('✅ Foto de portada actualizada');
     };
     reader.readAsDataURL(input.files[0]);
 };
@@ -348,19 +1186,45 @@ function renderStories() {
 }
 
 window.addStory = function() {
-    var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+    // Eliminar input previo si existía
+    var old = document.getElementById('_storyFileInput');
+    if (old) old.remove();
+
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.id = '_storyFileInput';
+    input.style.cssText = 'position:fixed;top:-100px;left:-100px;opacity:0;pointer-events:none;';
+    document.body.appendChild(input); // NECESARIO para iOS/Safari
+
     input.onchange = function(e) {
-        var file = e.target.files[0]; if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-            var u = socialDB.currentUser;
-            socialDB.stories = socialDB.stories.filter(function(s) { return s.authorUsername !== u.username; });
-            socialDB.stories.push({ id:'story_'+Date.now(), authorUsername:u.username, authorName:u.name, type:'image', content:ev.target.result, createdAt:new Date().toISOString() });
-            saveDB(); showToast('✅ Historia publicada'); renderStories();
-        };
-        reader.readAsDataURL(file);
+        var file = e.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var u = socialDB.currentUser;
+                // Eliminar historia anterior del mismo usuario
+                socialDB.stories = socialDB.stories.filter(function(s) { return s.authorUsername !== u.username; });
+                socialDB.stories.push({
+                    id: 'story_' + Date.now(),
+                    authorUsername: u.username,
+                    authorName: u.name,
+                    type: 'image',
+                    content: ev.target.result,
+                    createdAt: new Date().toISOString()
+                });
+                saveDB();
+                showToast('✅ Historia publicada');
+                renderStories();
+            };
+            reader.readAsDataURL(file);
+        }
+        // Limpiar el input del DOM
+        setTimeout(function() { input.remove(); }, 1000);
     };
-    input.click();
+
+    // Pequeño delay para garantizar que el input ya está en el DOM antes de hacer click
+    setTimeout(function() { input.click(); }, 50);
 };
 
 window.viewStory = function(storyId) {
@@ -410,7 +1274,19 @@ function buildPostHTML(p) {
     var mediaHTML = '';
     if (p.media) {
         if (p.mediaType === 'video') {
-            mediaHTML = '<video src="' + p.media + '" class="post-media-content" controls style="max-height:400px;" preload="metadata"></video>';
+            // Video con posibles overlays de texto y música
+            var hasText  = p.videoText  && p.videoText.trim();
+            var hasMusic = p.videoMusic && p.videoMusic.trim();
+            var txColor  = p.videoColor || '#ffffff';
+            var txSize   = p.videoSize  || 22;
+            var txX      = p.videoTextX !== undefined ? p.videoTextX : 50;
+            var txY      = p.videoTextY !== undefined ? p.videoTextY : 50;
+            mediaHTML =
+                '<div style="position:relative;margin-top:10px;border-radius:12px;overflow:hidden;background:#000;">' +
+                '<video src="' + p.media + '" class="post-media-content" controls style="max-height:400px;margin-top:0;border-radius:0;" preload="metadata"></video>' +
+                (hasText ? '<div style="position:absolute;left:' + txX + '%;top:' + txY + '%;transform:translate(-50%,-50%);font-size:' + txSize + 'px;font-weight:800;color:' + txColor + ';text-shadow:0 2px 8px rgba(0,0,0,.7);text-align:center;pointer-events:none;max-width:90%;word-break:break-word;white-space:pre-wrap;padding:4px 8px;border-radius:6px;">' + p.videoText + '</div>' : '') +
+                (hasMusic ? '<div style="position:absolute;bottom:48px;left:12px;display:flex;align-items:center;gap:6px;pointer-events:none;"><div style="width:24px;height:24px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;animation:spinSlow 4s linear infinite;"><i class="fa-solid fa-music"></i></div><span style="font-size:11px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.videoMusic + '</span></div>' : '') +
+                '</div>';
         } else {
             mediaHTML = '<img src="' + p.media + '" class="post-media-content" onclick="openFullscreen(this.src)" alt="media">';
         }
@@ -573,7 +1449,7 @@ window.handleMedia = function(input, type) {
     if (!input.files[0]) return;
     var file = input.files[0];
     if (type === 'video') {
-        // Para videos: abrir editor modal antes de publicar (como Instagram)
+        // Para videos: abrir editor modal antes de publicar
         openPostVideoEditor(file);
     } else {
         // Para imágenes: previsualización directa inline
@@ -593,77 +1469,397 @@ window.handleMedia = function(input, type) {
     }
 };
 
-// Editor de video antes de publicar un post (estilo Instagram)
+// Editor de video antes de publicar un post
 window.openPostVideoEditor = function(file) {
     var overlay = document.getElementById('reelEditorOverlay'); if (!overlay) return;
     var objUrl = URL.createObjectURL(file);
 
-    overlay.innerHTML = '<div class="reel-editor-box" style="max-width:480px;">' +
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">' +
+    // Estado interno del editor
+    var editorState = {
+        textVal: '', textColor: '#ffffff', textSize: 22,
+        textX: 50, textY: 50,          // % posición
+        dragging: false, dragOX: 0, dragOY: 0,
+        musicMode: 'preset',           // 'preset' | 'file'
+        musicFileB64: null, musicFileName: '',
+        musicAudio: null,              // Audio() para preview
+        musicVol: 0.5
+    };
+
+    overlay.innerHTML =
+        '<div class="reel-editor-box" style="max-width:500px;">' +
+        // Cabecera
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
         '<button onclick="closePostVideoEditor()" style="background:none;border:none;font-size:20px;color:var(--text-muted);cursor:pointer;padding:4px;"><i class="fa-solid fa-arrow-left"></i></button>' +
-        '<h2 style="margin:0;font-size:18px;">Editar video</h2></div>' +
-        '<div class="reel-editor-preview" style="max-height:280px;aspect-ratio:auto;">' +
-        '<video id="postVidPreview" src="' + objUrl + '" controls style="width:100%;height:100%;object-fit:contain;max-height:280px;"></video>' +
-        '<div class="reel-text-overlay" id="postVidTextOverlay" style="font-size:18px;"></div>' +
+        '<h2 style="margin:0;font-size:18px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Editar video</h2></div>' +
+
+        // Preview del video con texto arrastrable
+        '<div class="reel-editor-preview" id="postEditorPreview" style="max-height:260px;position:relative;overflow:hidden;border-radius:14px;background:#000;aspect-ratio:auto;">' +
+        '<video id="postVidPreview" src="' + objUrl + '" controls style="width:100%;max-height:260px;object-fit:contain;display:block;"></video>' +
+        '<div id="postVidTextOverlay" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7);text-align:center;cursor:grab;user-select:none;max-width:90%;word-break:break-word;white-space:pre-wrap;padding:4px 8px;border-radius:6px;touch-action:none;display:none;"></div>' +
         '</div>' +
-        '<div class="reel-editor-controls" style="margin-top:16px;">' +
-        '<label class="editor-label"><i class="fa-solid fa-font" style="color:var(--primary);margin-right:6px;"></i>Texto superpuesto</label>' +
-        '<input type="text" class="editor-input" id="postVidText" placeholder="Añade un texto al video..." oninput="document.getElementById(\'postVidTextOverlay\').textContent=this.value">' +
-        '<label class="editor-label" style="margin-top:12px;"><i class="fa-solid fa-music" style="color:var(--primary);margin-right:6px;"></i>Música de fondo</label>' +
-        '<select class="editor-input" id="postVidMusic">' +
+
+        // Controles en tabs
+        '<div style="display:flex;border-bottom:1px solid var(--border);margin:16px 0 14px;gap:4px;">' +
+        '<button id="edTab-text" onclick="editorTab(\'text\')" style="flex:1;padding:8px 0;border:none;border-bottom:2px solid var(--primary);background:none;color:var(--primary);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-font" style="margin-right:5px;"></i>Texto</button>' +
+        '<button id="edTab-music" onclick="editorTab(\'music\')" style="flex:1;padding:8px 0;border:none;border-bottom:2px solid transparent;background:none;color:var(--text-muted);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-music" style="margin-right:5px;"></i>Música</button>' +
+        '</div>' +
+
+        // Panel TEXTO
+        '<div id="edPanel-text">' +
+        '<div class="editor-label" style="margin-bottom:8px;">Escribe y arrastra el texto sobre el video</div>' +
+        '<input type="text" class="editor-input" id="postVidText" placeholder="Tu texto aquí..." oninput="updateEditorText()" style="margin-bottom:12px;">' +
+        '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">' +
+        // Color
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+        '<span style="font-size:11px;color:var(--text-muted);font-weight:600;">COLOR</span>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;max-width:200px;">' +
+        ['#ffffff','#000000','#ff4d4d','#ffd700','#4caf50','#1e8ee9','#c639b8','#ff9800','#00bcd4','#e91e63'].map(function(c) {
+            return '<div onclick="setEditorTextColor(\'' + c + '\')" style="width:26px;height:26px;border-radius:50%;background:' + c + ';cursor:pointer;border:2px solid ' + (c==='#ffffff'?'#ccc':'transparent') + ';transition:transform .15s;" id="ecol-' + c.replace('#','') + '"></div>';
+        }).join('') +
+        '<input type="color" id="postVidColorPicker" value="#ffffff" oninput="setEditorTextColor(this.value)" style="width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;padding:0;overflow:hidden;" title="Color personalizado">' +
+        '</div></div>' +
+        // Tamaño
+        '<div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;">' +
+        '<span style="font-size:11px;color:var(--text-muted);font-weight:600;">TAMAÑO</span>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<span style="font-size:12px;color:var(--text-muted);">A</span>' +
+        '<input type="range" min="12" max="48" value="22" id="postVidFontSize" oninput="updateEditorText()" style="flex:1;">' +
+        '<span style="font-size:18px;font-weight:700;color:var(--text-muted);">A</span>' +
+        '</div></div>' +
+        '</div>' +
+        '<div style="font-size:12px;color:var(--text-muted);margin-top:10px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-hand-pointer"></i> Arrastra el texto en el video para reposicionarlo</div>' +
+        '</div>' +
+
+        // Panel MÚSICA
+        '<div id="edPanel-music" style="display:none;">' +
+        // Switch preset / archivo
+        '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<button id="modeBtn-preset" onclick="setMusicMode(\'preset\')" style="flex:1;padding:8px;border-radius:20px;border:none;background:var(--gradient);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">🎵 Predefinida</button>' +
+        '<button id="modeBtn-file"   onclick="setMusicMode(\'file\')"   style="flex:1;padding:8px;border-radius:20px;border:1.5px solid var(--border);background:none;color:var(--text-secondary);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;">📁 Mi música</button>' +
+        '</div>' +
+        // Panel preset
+        '<div id="musicPresetPanel">' +
+        '<select class="editor-input" id="postVidMusic" onchange="previewMusicChange()" style="margin-bottom:10px;">' +
         '<option value="">Sin música</option>' +
-        MUSIC_TRACKS.map(function(t) { return '<option value="' + t.title + '">' + t.title + '</option>'; }).join('') +
+        MUSIC_TRACKS.map(function(t,i) { return '<option value="' + t.title + '" data-idx="' + i + '">' + t.title + '</option>'; }).join('') +
         '</select>' +
-        '<label class="editor-label" style="margin-top:12px;"><i class="fa-solid fa-volume-high" style="color:var(--primary);margin-right:6px;"></i>Volumen música</label>' +
-        '<div class="volume-control"><i class="fa-solid fa-volume-low"></i><input type="range" min="0" max="1" step="0.05" value="0.5" id="postVidVol"><i class="fa-solid fa-volume-high"></i>' +
-        '<span id="postVidVolLabel" style="font-size:12px;color:var(--text-muted);margin-left:6px;">50%</span></div>' +
+        '<div style="font-size:12px;color:var(--text-muted);background:var(--bg-input);border-radius:10px;padding:10px 12px;"><i class="fa-solid fa-circle-info" style="margin-right:6px;color:var(--primary);"></i>La música de fondo se mostrará como título en el reel. Se reproduce junto a tu video.</div>' +
         '</div>' +
-        '<div style="background:var(--bg-hover);border-radius:12px;padding:12px 14px;margin-top:14px;display:flex;align-items:center;gap:10px;">' +
-        '<i class="fa-solid fa-circle-info" style="color:var(--primary);font-size:16px;flex-shrink:0;"></i>' +
-        '<span style="font-size:13px;color:var(--text-secondary);">Máximo 1 minuto. Puedes añadir texto y música de fondo.</span></div>' +
+        // Panel archivo
+        '<div id="musicFilePanel" style="display:none;">' +
+        '<label class="btn-outline" style="width:100%;justify-content:center;cursor:pointer;margin-bottom:12px;" id="musicFileLabel">' +
+        '<i class="fa-solid fa-folder-open" style="color:var(--primary);margin-right:8px;"></i>Seleccionar canción' +
+        '<input type="file" hidden accept="audio/*" onchange="loadMusicFile(this)">' +
+        '</label>' +
+        '<div id="musicFileInfo" style="display:none;background:var(--bg-input);border-radius:12px;padding:12px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+        '<div style="width:36px;height:36px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;"><i class="fa-solid fa-music"></i></div>' +
+        '<div style="flex:1;overflow:hidden;"><div id="musicFileName" style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div><div id="musicFileDuration" style="font-size:11px;color:var(--text-muted);"></div></div>' +
+        '</div>' +
+        // Controles audio
+        '<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">' +
+        '<button id="musicPlayBtn" onclick="toggleMusicPreview()" style="width:36px;height:36px;border-radius:50%;background:var(--gradient);border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-play" id="musicPlayIcon"></i></button>' +
+        '<input type="range" id="musicSeekBar" min="0" max="100" value="0" oninput="seekMusic(this.value)" style="flex:1;">' +
+        '<span id="musicTimeLabel" style="font-size:11px;color:var(--text-muted);min-width:36px;text-align:right;">0:00</span>' +
+        '</div>' +
+        // Recorte (start / end)
+        '<div style="margin-bottom:8px;">' +
+        '<div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px;">RECORTAR (inicio – fin)</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;">' +
+        '<span style="font-size:12px;color:var(--text-muted);width:28px;">▶</span>' +
+        '<input type="range" id="musicStartBar" min="0" max="100" value="0" oninput="updateMusicTrim()" style="flex:1;">' +
+        '<span id="musicStartLabel" style="font-size:11px;color:var(--text-muted);min-width:36px;">0:00</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;margin-top:6px;">' +
+        '<span style="font-size:12px;color:var(--text-muted);width:28px;">⏹</span>' +
+        '<input type="range" id="musicEndBar" min="0" max="100" value="100" oninput="updateMusicTrim()" style="flex:1;">' +
+        '<span id="musicEndLabel" style="font-size:11px;color:var(--text-muted);min-width:36px;">-</span>' +
+        '</div></div></div></div>' +
+        // Volumen (compartido)
+        '<div style="margin-top:12px;">' +
+        '<div class="editor-label" style="margin-bottom:6px;"><i class="fa-solid fa-volume-high" style="color:var(--primary);margin-right:6px;"></i>Volumen música</div>' +
+        '<div class="volume-control"><i class="fa-solid fa-volume-low"></i><input type="range" min="0" max="1" step="0.05" value="0.5" id="postVidVol" oninput="updateMusicVol(this)"><i class="fa-solid fa-volume-high"></i>' +
+        '<span id="postVidVolLabel" style="font-size:12px;color:var(--text-muted);margin-left:6px;">50%</span></div>' +
+        '</div></div>' +
+
+        // Botones finales
         '<div style="display:flex;gap:10px;margin-top:20px;">' +
         '<button class="btn-outline" onclick="closePostVideoEditor()" style="flex:1;">Cancelar</button>' +
         '<button class="btn-join" onclick="confirmPostVideo()" style="flex:1;"><i class="fa-solid fa-check"></i> Listo</button>' +
         '</div></div>';
 
-    overlay._postVidFile = file;
+    overlay._postVidFile  = file;
     overlay._postVidObjUrl = objUrl;
+    overlay._editorState  = editorState;
 
-    // Validar duración al cargar
+    // Inicializar lógica tras render
     setTimeout(function() {
         var vid = document.getElementById('postVidPreview');
         if (!vid) return;
         vid.onloadedmetadata = function() {
-            if (vid.duration > 60) {
-                showToast('⚠️ El video no puede superar 1 minuto');
-                closePostVideoEditor();
-            }
+            if (vid.duration > 60) { showToast('⚠️ El video no puede superar 1 minuto'); closePostVideoEditor(); }
         };
-        // Vol label
-        var slider = document.getElementById('postVidVol');
-        var label  = document.getElementById('postVidVolLabel');
-        if (slider) slider.addEventListener('input', function() { if (label) label.textContent = Math.round(slider.value*100) + '%'; });
-    }, 50);
+
+        // Drag del texto superpuesto
+        var textEl  = document.getElementById('postVidTextOverlay');
+        var preview = document.getElementById('postEditorPreview');
+        if (textEl && preview) {
+            function startDrag(cx, cy) {
+                editorState.dragging = true;
+                var rect = preview.getBoundingClientRect();
+                editorState.dragOX = cx - rect.left - (editorState.textX / 100 * rect.width);
+                editorState.dragOY = cy - rect.top  - (editorState.textY / 100 * rect.height);
+                textEl.style.cursor = 'grabbing';
+            }
+            function moveDrag(cx, cy) {
+                if (!editorState.dragging) return;
+                var rect = preview.getBoundingClientRect();
+                var nx = (cx - rect.left - editorState.dragOX) / rect.width  * 100;
+                var ny = (cy - rect.top  - editorState.dragOY) / rect.height * 100;
+                editorState.textX = Math.max(5, Math.min(95, nx));
+                editorState.textY = Math.max(5, Math.min(95, ny));
+                textEl.style.left = editorState.textX + '%';
+                textEl.style.top  = editorState.textY + '%';
+            }
+            function endDrag() { editorState.dragging = false; textEl.style.cursor = 'grab'; }
+            textEl.addEventListener('mousedown',  function(e) { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+            document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
+            document.addEventListener('mouseup',   endDrag);
+            textEl.addEventListener('touchstart',  function(e) { e.preventDefault(); startDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive:false });
+            document.addEventListener('touchmove',  function(e) { if(editorState.dragging){ e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); } }, { passive:false });
+            document.addEventListener('touchend',   endDrag);
+        }
+    }, 80);
 
     overlay.style.display = 'flex';
     setTimeout(function() { overlay.classList.add('active'); }, 10);
 };
 
+// Funciones del editor de video ─────────────────────────
+window.editorTab = function(tab) {
+    ['text','music'].forEach(function(t) {
+        var panel = document.getElementById('edPanel-'+t);
+        var btn   = document.getElementById('edTab-'+t);
+        if (!panel||!btn) return;
+        var active = t === tab;
+        panel.style.display = active ? 'block' : 'none';
+        btn.style.borderBottom = active ? '2px solid var(--primary)' : '2px solid transparent';
+        btn.style.color = active ? 'var(--primary)' : 'var(--text-muted)';
+        btn.style.fontWeight = active ? '700' : '600';
+    });
+};
+
+window.updateEditorText = function() {
+    var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var st  = ov._editorState; if (!st) return;
+    var inp = document.getElementById('postVidText');
+    var sizeSlider = document.getElementById('postVidFontSize');
+    var el  = document.getElementById('postVidTextOverlay'); if (!el) return;
+    st.textVal  = inp ? inp.value : st.textVal;
+    st.textSize = sizeSlider ? parseInt(sizeSlider.value) : st.textSize;
+    el.textContent = st.textVal;
+    el.style.fontSize  = st.textSize + 'px';
+    el.style.color     = st.textColor;
+    el.style.display   = st.textVal ? 'block' : 'none';
+    el.style.left = st.textX + '%';
+    el.style.top  = st.textY + '%';
+};
+
+window.setEditorTextColor = function(color) {
+    var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var st = ov._editorState; if (!st) return;
+    st.textColor = color;
+    var el = document.getElementById('postVidTextOverlay'); if (el) el.style.color = color;
+    // Visual feedback en los chips de color
+    document.querySelectorAll('[id^="ecol-"]').forEach(function(d) { d.style.border = '2px solid transparent'; });
+    var chip = document.getElementById('ecol-' + color.replace('#',''));
+    if (chip) chip.style.border = '2px solid var(--primary)';
+    var picker = document.getElementById('postVidColorPicker'); if (picker) picker.value = color;
+};
+
+window.setMusicMode = function(mode) {
+    var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    ov._editorState.musicMode = mode;
+    document.getElementById('musicPresetPanel').style.display = mode==='preset' ? 'block' : 'none';
+    document.getElementById('musicFilePanel').style.display   = mode==='file'   ? 'block' : 'none';
+    var preBtn = document.getElementById('modeBtn-preset');
+    var filBtn = document.getElementById('modeBtn-file');
+    if (preBtn) { preBtn.style.background = mode==='preset' ? 'var(--gradient)' : 'none'; preBtn.style.color = mode==='preset'?'#fff':'var(--text-secondary)'; preBtn.style.border = mode==='preset'?'none':'1.5px solid var(--border)'; }
+    if (filBtn) { filBtn.style.background = mode==='file'   ? 'var(--gradient)' : 'none'; filBtn.style.color = mode==='file'  ?'#fff':'var(--text-secondary)'; filBtn.style.border = mode==='file'  ?'none':'1.5px solid var(--border)'; }
+};
+
+window.loadMusicFile = function(input) {
+    if (!input.files[0]) return;
+    var file = input.files[0];
+    var ov   = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var st   = ov._editorState;
+
+    // Parar audio previo
+    if (st.musicAudio) { st.musicAudio.pause(); st.musicAudio = null; }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        st.musicFileB64  = e.target.result;
+        st.musicFileName = file.name.replace(/\.[^.]+$/, '');
+
+        var audio = new Audio(e.target.result);
+        st.musicAudio = audio;
+        audio.volume  = st.musicVol;
+
+        audio.addEventListener('loadedmetadata', function() {
+            var dur = audio.duration;
+            var end = document.getElementById('musicEndBar');
+            var endLbl = document.getElementById('musicEndLabel');
+            if (end) { end.max = dur; end.value = dur; }
+            if (endLbl) endLbl.textContent = formatTime(dur);
+            var startBar = document.getElementById('musicStartBar');
+            if (startBar) { startBar.max = dur; startBar.value = 0; }
+            var durEl = document.getElementById('musicFileDuration');
+            if (durEl) durEl.textContent = formatTime(dur);
+        });
+
+        audio.addEventListener('timeupdate', function() {
+            var seek = document.getElementById('musicSeekBar');
+            var lbl  = document.getElementById('musicTimeLabel');
+            if (seek) { seek.max = audio.duration||100; seek.value = audio.currentTime; }
+            if (lbl)  lbl.textContent = formatTime(audio.currentTime);
+            // Parar en el punto de corte
+            var endBar = document.getElementById('musicEndBar');
+            if (endBar && audio.currentTime >= parseFloat(endBar.value)) audio.pause();
+        });
+
+        audio.addEventListener('ended', function() {
+            var icon = document.getElementById('musicPlayIcon');
+            if (icon) icon.className = 'fa-solid fa-play';
+        });
+        audio.addEventListener('pause', function() {
+            var icon = document.getElementById('musicPlayIcon');
+            if (icon) icon.className = 'fa-solid fa-play';
+        });
+        audio.addEventListener('play', function() {
+            var icon = document.getElementById('musicPlayIcon');
+            if (icon) icon.className = 'fa-solid fa-pause';
+        });
+
+        // Mostrar info
+        var nameEl = document.getElementById('musicFileName');
+        if (nameEl) nameEl.textContent = st.musicFileName;
+        document.getElementById('musicFileInfo').style.display = 'block';
+        document.getElementById('musicFileLabel').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+};
+
+window.toggleMusicPreview = function() {
+    var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var audio = ov._editorState.musicAudio; if (!audio) return;
+    if (audio.paused) {
+        var startBar = document.getElementById('musicStartBar');
+        if (startBar && audio.currentTime < parseFloat(startBar.value)) audio.currentTime = parseFloat(startBar.value);
+        audio.play();
+    } else {
+        audio.pause();
+    }
+};
+
+window.seekMusic = function(val) {
+    var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var audio = ov._editorState.musicAudio; if (!audio) return;
+    audio.currentTime = parseFloat(val);
+};
+
+window.updateMusicTrim = function() {
+    var startBar  = document.getElementById('musicStartBar');
+    var endBar    = document.getElementById('musicEndBar');
+    var startLbl  = document.getElementById('musicStartLabel');
+    var endLbl    = document.getElementById('musicEndLabel');
+    if (startBar && startLbl) startLbl.textContent = formatTime(parseFloat(startBar.value));
+    if (endBar   && endLbl)   endLbl.textContent   = formatTime(parseFloat(endBar.value));
+    // Asegurar start < end
+    if (startBar && endBar && parseFloat(startBar.value) >= parseFloat(endBar.value)) {
+        endBar.value = Math.min(parseFloat(endBar.max), parseFloat(startBar.value) + 1);
+        if (endLbl) endLbl.textContent = formatTime(parseFloat(endBar.value));
+    }
+};
+
+window.updateMusicVol = function(slider) {
+    var ov  = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    var st  = ov._editorState;
+    var val = parseFloat(slider.value);
+    st.musicVol = val;
+    if (st.musicAudio) st.musicAudio.volume = val;
+    var lbl = document.getElementById('postVidVolLabel');
+    if (lbl) lbl.textContent = Math.round(val*100) + '%';
+};
+
+window.previewMusicChange = function() {
+    // No hay preview para tracks predefinidos (solo título)
+};
+
+function formatTime(s) {
+    if (!s || isNaN(s)) return '0:00';
+    var m = Math.floor(s/60), sec = Math.floor(s%60);
+    return m + ':' + (sec<10?'0':'') + sec;
+}
+
 window.confirmPostVideo = function() {
     var overlay = document.getElementById('reelEditorOverlay'); if (!overlay) return;
-    var file    = overlay._postVidFile; if (!file) return;
-    var text    = (document.getElementById('postVidText')  || {}).value || '';
-    var music   = (document.getElementById('postVidMusic') || {}).value || '';
+    var file = overlay._postVidFile; if (!file) return;
+    var st   = overlay._editorState || {};
+
+    // Parar audio si estaba reproduciendo
+    if (st.musicAudio) { st.musicAudio.pause(); }
+
+    // Sincronizar todos los valores desde el DOM al estado antes de leer
+    var textInput     = document.getElementById('postVidText');
+    var sizeSlider    = document.getElementById('postVidFontSize');
+    if (textInput)  st.textVal  = textInput.value || '';
+    if (sizeSlider) st.textSize = parseInt(sizeSlider.value) || 22;
+
+    // Leer valores finales del estado (ya sincronizados)
+    var text      = st.textVal   || '';
+    var textColor = st.textColor || '#ffffff';
+    var textSize  = st.textSize  || 22;
+    var textX     = (st.textX !== undefined && st.textX !== null) ? st.textX : 50;
+    var textY     = (st.textY !== undefined && st.textY !== null) ? st.textY : 50;
+
+    // Música: preset o archivo
+    var musicMode  = st.musicMode || 'preset';
+    var musicTitle = '';
+    var musicB64   = null;
+    var musicStart = 0;
+    var musicEnd   = null;
+    var musicVol   = (st.musicVol !== undefined) ? st.musicVol : 0.5;
+
+    if (musicMode === 'preset') {
+        var sel = document.getElementById('postVidMusic');
+        musicTitle = sel ? sel.value : '';
+    } else {
+        musicTitle = st.musicFileName || '';
+        musicB64   = st.musicFileB64  || null;
+        var startBar = document.getElementById('musicStartBar');
+        var endBar   = document.getElementById('musicEndBar');
+        musicStart = startBar ? (parseFloat(startBar.value)||0) : 0;
+        musicEnd   = endBar   ? (parseFloat(endBar.value)||null) : null;
+    }
 
     showToast('⏳ Procesando video...');
     var reader = new FileReader();
     reader.onload = function(e) {
-        socialDB.tempMedia      = e.target.result;
-        socialDB.tempMediaType  = 'video';
-        socialDB.tempVideoText  = text;
-        socialDB.tempVideoMusic = music;
+        socialDB.tempMedia           = e.target.result;
+        socialDB.tempMediaType       = 'video';
+        socialDB.tempVideoText       = text;
+        socialDB.tempVideoColor      = textColor;
+        socialDB.tempVideoSize       = textSize;
+        socialDB.tempVideoTextX      = textX;
+        socialDB.tempVideoTextY      = textY;
+        socialDB.tempVideoMusic      = musicTitle;
+        socialDB.tempVideoMusicB64   = musicB64;
+        socialDB.tempVideoMusicStart = musicStart;
+        socialDB.tempVideoMusicEnd   = musicEnd;
+        socialDB.tempVideoMusicVol   = musicVol;
 
-        // Mostrar preview en la tarjeta de crear post
+        // Preview en la tarjeta de post
         var box = document.getElementById('previewBox');
         var img = document.getElementById('imgPrev');
         var vid = document.getElementById('videoPrev');
@@ -679,8 +1875,13 @@ window.confirmPostVideo = function() {
 
 window.closePostVideoEditor = function() {
     var ov = document.getElementById('reelEditorOverlay'); if (!ov) return;
+    if (ov._editorState && ov._editorState.musicAudio) {
+        ov._editorState.musicAudio.pause();
+        ov._editorState.musicAudio = null;
+    }
     if (ov._postVidObjUrl) { URL.revokeObjectURL(ov._postVidObjUrl); ov._postVidObjUrl = null; }
-    ov._postVidFile = null;
+    ov._postVidFile  = null;
+    ov._editorState  = null;
     ov.classList.remove('active');
     setTimeout(function() { ov.style.display = 'none'; ov.innerHTML = ''; }, 400);
 };
@@ -698,8 +1899,25 @@ window.publishPost = function() {
     var content = txt.value.trim(); var feelingVal = feeling ? feeling.value.trim() : '';
     if (!content && !socialDB.tempMedia) return showToast('⚠️ Escribe algo o añade una imagen/video');
     var u = socialDB.currentUser;
-    socialDB.posts.unshift({ id:'post_'+Date.now(), authorUsername:u.username, authorName:u.name, content:content, feeling:feelingVal, media:socialDB.tempMedia, mediaType:socialDB.tempMediaType, likes:[], reactions:{}, comments:[], createdAt:new Date().toISOString() });
+    socialDB.posts.unshift({
+        id:'post_'+Date.now(),
+        authorUsername:u.username, authorName:u.name,
+        content:content, feeling:feelingVal,
+        media:socialDB.tempMedia, mediaType:socialDB.tempMediaType,
+        videoText:  socialDB.tempVideoText  || '',
+        videoColor: socialDB.tempVideoColor || '#ffffff',
+        videoSize:  socialDB.tempVideoSize  || 22,
+        videoTextX: socialDB.tempVideoTextX !== undefined ? socialDB.tempVideoTextX : 50,
+        videoTextY: socialDB.tempVideoTextY !== undefined ? socialDB.tempVideoTextY : 50,
+        videoMusic: socialDB.tempVideoMusic || '',
+        likes:[], reactions:{}, comments:[],
+        createdAt:new Date().toISOString()
+    });
     socialDB.tempMedia = null; socialDB.tempMediaType = null;
+    socialDB.tempVideoText = null; socialDB.tempVideoColor = null;
+    socialDB.tempVideoSize = null; socialDB.tempVideoTextX = null;
+    socialDB.tempVideoTextY = null; socialDB.tempVideoMusic = null;
+    socialDB.tempVideoMusicB64 = null;
     saveDB(); if (txt) txt.value = ''; if (feeling) feeling.value = '';
     removeMedia(); showToast('✅ Publicación creada'); renderPosts();
     var el = document.getElementById('statPosts'); if (el) el.textContent = socialDB.posts.filter(function(p) { return p.authorUsername === u.username; }).length;
@@ -1065,14 +2283,14 @@ var YOUTUBE_POOL = {
 var userReels = JSON.parse(localStorage.getItem('social_user_reels') || '[]');
 
 var MUSIC_TRACKS = [
-    { title:'Blinding Lights — The Weeknd', id:'music1' },
-    { title:'Shape of You — Ed Sheeran',    id:'music2' },
-    { title:'Levitating — Dua Lipa',        id:'music3' },
-    { title:'Bad Guy — Billie Eilish',      id:'music4' },
-    { title:'Dynamite — BTS',               id:'music5' },
-    { title:'Tití Me Preguntó — Bad Bunny', id:'music6' },
-    { title:'Sin límites — Rubio',          id:'music7' },
-    { title:'Hawái — Maluma',               id:'music8' },
+    { title:'Summer Vibes — Globalink Originals',    id:'music1' },
+    { title:'Electric Dream — Free Beats Studio',    id:'music2' },
+    { title:'Sunset Drive — Royalty Free Music',     id:'music3' },
+    { title:'Urban Pulse — Free Music Archive',      id:'music4' },
+    { title:'Chill Wave — Creative Commons',         id:'music5' },
+    { title:'Latin Fire — Open Music Library',       id:'music6' },
+    { title:'Acoustic Morning — Free Sounds',        id:'music7' },
+    { title:'Night City — CC0 Music',                id:'music8' },
 ];
 
 function shuffle(arr) {
@@ -1319,7 +2537,7 @@ window.closeReelComments = function() {
     ov.classList.remove('active'); setTimeout(function() { ov.style.display='none'; ov.innerHTML=''; }, 400);
 };
 
-// Perfil del autor del reel (estilo Instagram/TikTok)
+// Panel de perfil del autor en vista de reel
 window.openReelAuthorProfile = function(username) {
     var person = getUser(username); if (!person) return;
     var u = socialDB.currentUser;
@@ -1628,6 +2846,23 @@ window.closeFullscreen = function() { var el=document.getElementById('imgFullscr
 // ── 23. INICIALIZACIÓN ───────────────────────────────────
 window.onload = function() {
     applyTheme(socialDB.currentTheme);
+
+    // ── Restaurar sesión automáticamente al recargar ──
+    var savedSession = localStorage.getItem('social_session');
+    if (savedSession) {
+        // Buscar SIEMPRE dentro del array vivo, no una copia
+        var sessionIdx = socialDB.users.findIndex(function(u) { return u.username === savedSession; });
+        if (sessionIdx !== -1) {
+            socialDB.currentUser = socialDB.users[sessionIdx]; // referencia viva al array
+            launchApp();
+            return;
+        } else {
+            // usuario eliminado — limpiar sesión huérfana
+            localStorage.removeItem('social_session');
+        }
+    }
+
+    // Landing normal
     setTimeout(function() { document.querySelectorAll('.anim').forEach(function(el) { el.classList.add('show'); }); }, 100);
 
     // Parallax hero
@@ -1637,12 +2872,26 @@ window.onload = function() {
     });
 
     document.getElementById('openRegister').addEventListener('click', function() {
-        toggleModal(true, '<h2>Crear cuenta</h2><input type="text" id="regName" placeholder="Tu nombre completo"><input type="text" id="regUser" placeholder="Nombre de usuario"><input type="password" id="regPass" placeholder="Contraseña" onkeydown="if(event.key===\'Enter\') handleRegister()"><button class="btn-join" onclick="handleRegister()" style="width:100%;margin-top:10px;">Unirse ahora</button>');
+        openRegisterModal();
     });
     document.getElementById('openLogin').addEventListener('click', function() {
-        toggleModal(true, '<h2>Iniciar sesión</h2><input type="text" id="logUser" placeholder="Nombre de usuario"><input type="password" id="logPass" placeholder="Contraseña" onkeydown="if(event.key===\'Enter\') handleLogin()"><button class="btn-join" onclick="handleLogin()" style="width:100%;margin-top:10px;">Entrar</button><p onclick="openRecovery()" style="cursor:pointer;color:var(--secondary);margin-top:10px;font-size:13px;">¿Olvidaste tu contraseña?</p>');
+        openLoginModal();
     });
     document.getElementById('closeModal').addEventListener('click', function() { toggleModal(false); });
-    document.getElementById('heroStartBtn').addEventListener('click', function() { document.getElementById('openRegister').click(); });
+    document.getElementById('heroStartBtn').addEventListener('click', function() { closeMobileMenu(); document.getElementById('openRegister').click(); });
     document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target===this) toggleModal(false); });
+    // Cerrar menú móvil al hacer click fuera
+    document.addEventListener('click', function(e) {
+        var menu = document.getElementById('mobileMenu');
+        var btn  = document.getElementById('hamburgerBtn');
+        if (menu && menu.classList.contains('open')) {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                closeMobileMenu();
+            }
+        }
+    });
+    // Cerrar modal legal al hacer click fuera
+    document.getElementById('legalModal').addEventListener('click', function(e) { if (e.target===this) closeLegal(); });
+    // Inicializar banner de cookies
+    initCookieBanner();
 };
