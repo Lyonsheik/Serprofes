@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <!-- hCaptcha: verificación "no soy un robot" (RGPD-friendly) -->
     <script src="https://js.hcaptcha.com/1/api.js" async defer onload="window._hcaptchaReady=true;"></script>
+    <!-- Socket.IO cliente — chat en tiempo real -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
 
@@ -155,28 +157,33 @@
 
         <!-- Chat Flotante -->
         <div id="chatWindow" class="chat-window" style="display:none;">
-            <div class="chat-header">
+            <div class="chat-header" onclick="toggleMinimizeChat()" style="cursor:pointer;">
                 <div style="display:flex;align-items:center;gap:10px;">
                     <div class="chat-avatar" id="chatAvatar"></div>
                     <div>
                         <div id="chatUserName" style="font-weight:600;font-size:15px;"></div>
-                        <div style="font-size:11px;opacity:0.8;">En línea</div>
+                        <div id="chatStatusText" style="font-size:11px;opacity:0.8;">En línea</div>
                     </div>
                 </div>
-                <button onclick="closeChat()" class="chat-close-btn">×</button>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <button onclick="event.stopPropagation();toggleMinimizeChat()" class="chat-close-btn" id="chatMinimizeBtn" title="Minimizar" style="font-size:18px;line-height:1;">⌄</button>
+                    <button onclick="event.stopPropagation();closeChat()" class="chat-close-btn" title="Cerrar">×</button>
+                </div>
             </div>
-            <div id="chatMessages" class="chat-messages"></div>
-            <div class="chat-input-area">
-                <button class="emoji-trigger-btn" onclick="toggleEmojiPicker()">
-                    <i class="fa-regular fa-face-smile"></i>
-                </button>
-                <input type="text" id="chatInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" class="send-btn">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-            <div class="emoji-picker" id="emojiPicker" style="display:none;">
-                <div class="emoji-grid" id="emojiGrid"></div>
+            <div id="chatBody">
+                <div id="chatMessages" class="chat-messages"></div>
+                <div class="chat-input-area">
+                    <button class="emoji-trigger-btn" onclick="toggleEmojiPicker()">
+                        <i class="fa-regular fa-face-smile"></i>
+                    </button>
+                    <input type="text" id="chatInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="emoji-picker" id="emojiPicker" style="display:none;">
+                    <div class="emoji-grid" id="emojiGrid"></div>
+                </div>
             </div>
         </div>
 
@@ -188,8 +195,10 @@
             <div class="nav-tab" id="mnav-buscar" onclick="switchSection('buscar')">
                 <i class="fa-solid fa-magnifying-glass"></i><span>Buscar</span>
             </div>
-            <div class="nav-tab" id="mnav-reels" onclick="switchSection('reels')">
-                <i class="fa-solid fa-clapperboard"></i><span>Reels</span>
+            <div class="nav-tab" id="mnav-amigos" onclick="switchSection('amigos')" style="position:relative;">
+                <i class="fa-solid fa-user-group"></i>
+                <span class="badge" id="mbadge-amigos" style="display:none;position:absolute;top:4px;right:8px;">0</span>
+                <span>Amigos</span>
             </div>
             <div class="nav-tab" id="mnav-notificaciones" onclick="switchSection('notificaciones')" style="position:relative;">
                 <i class="fa-solid fa-bell"></i>
