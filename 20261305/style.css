@@ -1,76 +1,84 @@
-*{
-    margin:0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 40px;
-    background: #101952;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f0a157;
     display: flex;
     justify-content: center;
+    padding: 40px;
 }
 
 .ticket {
-    background: rgb(212, 210, 89);
-    padding: 30px;
-    border-radius: 8px;
+    background: rgb(255, 255, 255);
+    padding: 25px;
     width: 350px;
+    border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
+
 h2 {
     text-align: center;
-    color: #333;
-    border-bottom: 2px dashed #ccc;
-    padding-bottom: 10px;
+    border-bottom: 2px dashed #ddd;
+    padding-bottom: 15px;
 }
+
 ul {
     list-style: none;
     padding: 0;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
+
 li {
-    padding: 10px 0;
-    border-bottom: 1px solid #ffffff;
-    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
 }
+
+.panel-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
 button {
-    background: #007acc;
-    color: white;
     padding: 12px;
     border: none;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1.1rem;
     border-radius: 5px;
     font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 14px;
 }
-button:hover{
-    background: #005fa3;
+
+button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn-calc { background-color: #2ecc71; color: white; }
+.btn-desc { background-color: #e67e22; color: white; }
+.btn-pdf { background-color: #3498db; color: white; }
+
+.total-box {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-top: 2px solid #333;
+    line-height: 1.8;
 }
-.total {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #da3b26;
-    text-align: right;
-    margin-top: 20px;
+
+/* REGLA PARA IMPRESIÓN: Oculta los botones en el PDF */
+@media print {
+    .panel-acciones, button {
+        display: none !important;
+    }
+    body { background: white; padding: 0; }
+    .ticket { box-shadow: none; width: 100%; border: none; }
 }
 
 @media print {
-    button, .botones-container {
+    .panel-acciones, button {
         display: none !important;
     }
-    
-    body {
-        background: white;
+    #contenedor-qr {
+        display: block !important; /* El QR siempre debe verse en el papel */
     }
-
-    .ticket {
-        box-shadow: none;
-        border: none;
-        width: 100%;
-    }
+    body { background: white; padding: 0; }
+    .ticket { box-shadow: none; width: 100%; border: none; }
 }

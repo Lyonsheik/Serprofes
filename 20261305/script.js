@@ -2,68 +2,74 @@ const carrito = [
     { nombre: "🍞 Pan de molde", precio: 1.20 },
     { nombre: "🥛 Leche entera", precio: 0.90 },
     { nombre: "🥚 Huevos Camperos", precio: 2.50 },
-    { nombre: "🥑 Aguacate", precio: 1.00 }
+    { nombre: "🥑 Aguacate", precio: 1.00 },
+    { nombre: "🥩 Filete de Ternera", precio: 5.75 },
+    { nombre: "🍝 Pasta Italiana", precio: 1.45 },
+    { nombre: "🍎 Manzanas (1kg)", precio: 2.10 },
+    { nombre: "🧀 Queso Curado", precio: 3.80 },
+    { nombre: "☕ Café Molido", precio: 2.95 },
+    { nombre: "🧼 Detergente", precio: 4.20 }
 ];
 
-// Dibujar productos al cargar
-let listaHTML = document.getElementById('lista-producto');
-for (let i = 0; i < carrito.length; i++) {
-    listaHTML.innerHTML += `
-    <li>
-        <span>${carrito[i].nombre}</span>
-        <span>${carrito[i].precio.toFixed(2)}€</span>
-    </li>`;
+// Dibujar productos en el ticket al cargar
+const listaHTML = document.getElementById('lista-producto');
+if (listaHTML) {
+    carrito.forEach(p => {
+        listaHTML.innerHTML += `<li><span>${p.nombre}</span><span>${p.precio.toFixed(2)}€</span></li>`;
+    });
 }
 
-// Función base para obtener la suma de los productos
 function obtenerSubtotal() {
-    let suma = 0;
-    for (let i = 0; i < carrito.length; i++) {
-        suma += carrito[i].precio;
-    }
-    return suma;
+    return carrito.reduce((total, p) => total + p.precio, 0);
 }
 
-// Función para mostrar el total normal
 function cobrar() {
     const subtotal = obtenerSubtotal();
     const iva = subtotal * 0.21;
-    const total = subtotal + iva;
-
-    imprimirResultado(subtotal, iva, total);
+    const totalFinal = subtotal + iva;
+    
+    actualizarUI(subtotal, iva, totalFinal);
+    generarQR(totalFinal);
 }
 
-// Función para aplicar un descuento (ej: 20)
 function aplicarDescuento(porcentaje) {
     const subtotal = obtenerSubtotal();
     const iva = subtotal * 0.21;
-    const totalConIva = subtotal + iva;
+    const totalBase = subtotal + iva;
+    const ahorro = totalBase * (porcentaje / 100);
+    const totalFinal = totalBase - ahorro;
 
-    // Cálculo del descuento
-    const cantidadDescontada = totalConIva * (porcentaje / 100);
-    const totalFinal = totalConIva - cantidadDescontada;
-
-    imprimirResultado(subtotal, iva, totalFinal, porcentaje);
+    actualizarUI(subtotal, iva, totalFinal, porcentaje);
+    generarQR(totalFinal, porcentaje);
 }
 
-// Función para actualizar el texto en el HTML
-function imprimirResultado(sub, tax, final, dto = 0) {
-    let htmlContent = `
-        Subtotal: ${sub.toFixed(2)}€ <br>
-        IVA (21%): ${tax.toFixed(2)}€ <br>
-    `;
-
-    if (dto > 0) {
-        htmlContent += `<span style="color: green;">Descuento aplicado: ${dto}%</span><br>`;
-    }
-
-    htmlContent += `<strong>Total: ${final.toFixed(2)}€</strong>`;
+function actualizarUI(sub, tax, final, dto = 0) {
+    let html = `Subtotal: ${sub.toFixed(2)}€ <br> IVA (21%): ${tax.toFixed(2)}€ <br>`;
+    if (dto > 0) html += `<span style="color: #27ae60;">Descuento ${dto}% aplicado</span><br>`;
+    html += `<strong>TOTAL: ${final.toFixed(2)}€</strong>`;
     
-    document.getElementById('resultado-total').innerHTML = htmlContent;
+    const resultadoHTML = document.getElementById('resultado-total');
+    if (resultadoHTML) {
+        resultadoHTML.innerHTML = html;
+    }
 }
 
-function imprimirPDF() {
-    // Primero nos aseguramos de que el total esté calculado antes de imprimir
-    // Si quieres que imprima lo que hay actualmente, solo deja window.print()
+function generarQR(total, dto = 0) {
+    const contenedor = document.getElementById('contenedor-qr');
+    const imgQR = document.getElementById('codigo-qr');
+    
+    if (contenedor && imgQR) {
+        const fecha = new Date().toLocaleString();
+        let datos = `TICKET COMPRA\nFecha: ${fecha}\nTotal: ${total.toFixed(2)}€`;
+        if(dto > 0) datos += `\nDesc: ${dto}%`;
+
+        const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(datos)}`;
+        
+        imgQR.src = url;
+        contenedor.style.display = "block";
+    }
+}
+
+function imprimirTicket() {
     window.print();
 }

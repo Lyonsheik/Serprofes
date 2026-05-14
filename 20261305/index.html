@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caja Registradora</title>
+    <title>Caja Registradora con QR</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="ticket">
+    <div class="ticket" id="ticket-area">
         <h2>🧾 Ticket de Compra</h2>
+        
         <ul id="lista-producto"></ul>
-        <button onclick="cobrar()">Calcular Total</button>
-    <button onclick="aplicarDescuento(20)" style="background-color: #e67e22;">Descuento 20%</button>
-    <button onclick="imprimirPDF()" style="background: #3498db; color: white;">Imprimir PDF</button>
-    
-    <p class="total" id="resultado-total">Total: 0.00 €</p>
-</div>
-        <p class="total" id="resultado-total">Total: 0.00 €</p>
+
+        <div class="panel-acciones">
+            <button class="btn-calc" onclick="cobrar()">🧮 Calcular Total</button>
+            <button class="btn-desc" onclick="aplicarDescuento(20)">🏷️ Aplicar -20%</button>
+            <button class="btn-pdf" onclick="imprimirTicket()">🖨️ Imprimir PDF</button>
+        </div>
+
+        <div class="total-box" id="resultado-total">
+            Presione calcular para empezar...
+        </div>
+
+        <!-- CONTENEDOR DEL QR -->
+        <div id="contenedor-qr" style="text-align: center; margin-top: 20px; display: none;">
+            <p style="font-size: 10px;">Escanea para validar ticket</p>
+            <img id="codigo-qr" src="" alt="Código QR del ticket" style="width: 150px; height: 150px;">
+        </div>
     </div>
-    
 </body>
 </html>
