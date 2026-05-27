@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Paddock - Torre de Control</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body> 
+    <header class="top-bar">
+        <div class="logo-f1">F1<span>TORRE</span></div>
+        <label class="switch-container">
+            <input type="checkbox" id="themeToggle">
+            <span class="switch-text">Cargando modo...</span>
+        </label>
+    </header>
+
+    <main class="contenedor-principal">
+        <section class="card">
+            <div class="card-header">
+                <h2>01 // PRUEBAS DE MOTOR (DYNO TEST)</h2>
+                <span class="status-live">LIVE RPM</span>
+            </div>
+            <p class="descripcion-p">Vista panorámica desde la torre de control. Presiona el acelerador para revolucionar el motor.</p>
+            <div class="control-box">
+                <button id="countBtn" class="btn btn-primary">¡ACELERAR MOTOR! 🏎️💨</button>
+                <div class="resultado">Revoluciones: <span id="count" class="badge">0</span> <small>RPM x100</small></div>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2>02 // PADDOCK CONTROL & CONFIGURACIONES</h2>
+            <button id="toggleMenu" class="btn btn-secondary">Abrir Panel de Telemetría</button>
+            
+            <nav id="mainNav" class="oculto menu-desplegable">
+                <div class="grid-menu-config">
+                    <div class="menu-col">
+                        <h3>📊 Panel de Control</h3>
+                        <ul>
+                            <li><button class="btn-menu-opt" id="btnMenuEcu">🗺️ Mapa de Motor (ECU)</button></li>
+                            <li><button class="btn-menu-opt" id="btnMenuTyres">🛞 Presión de Neumáticos</button></li>
+                        </ul>
+                        <h3 class="box-spacing">🛠️ Ajustes de Boxes</h3>
+                        <ul>
+                            <li><button class="btn-menu-opt" id="btnAbrirInscripcion">📝 Inscripción de Pilotos</button></li>
+                            <li><button class="btn-menu-opt" onclick="window.open('https://www.formula1.com', '_blank');">🌐 Servidores Live Timing</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-col display-telemetria">
+                        <div id="welcomeTelemetry" class="telemetry-pane">
+                            <p class="txt-center text-muted"><<< Seleccione un sistema en el panel izquierdo para inicializar el flujo de datos en tiempo real >>></p>
+                        </div>
+
+                        <div id="paneEcu" class="telemetry-pane oculto">
+                            <h3>DIAGNOSIS ECU ENGINE MAP</h3>
+                            <div class="selector-box">
+                                <label for="carModel">Monoplaza:</label>
+                                <select id="carModel">
+                                    <option value="ferrari">Scuderia Ferrari SF-24</option>
+                                    <option value="redbull">Red Bull Racing RB20</option>
+                                    <option value="mercedes">Mercedes-AMG W15</option>
+                                </select>
+                            </div>
+                            <div class="canvas-container">
+                                <canvas id="ecuCanvas" width="320" height="180"></canvas>
+                            </div>
+                            <div class="ecu-data-footer">
+                                <div>POTENCIA MÁX: <span id="txtEcuPower" class="txt-neon">985 HP</span></div>
+                                <div>MEZCLA: <span class="txt-neon">LEAN FLUE</span></div>
+                            </div>
+                        </div>
+
+                        <div id="paneTyres" class="telemetry-pane oculto">
+                            <div class="tyres-header">
+                                <h3>MONITOR TÉRMICO DE COMPUESTOS</h3>
+                                <button id="btnScanTyres" class="btn btn-primary btn-small">INICIAR ESCANEO</button>
+                            </div>
+                            
+                            <div class="f1-car-grid">
+                                <div class="tyre-wrapper">
+                                    <div class="tyre-ui" id="tyreFL"><span>FL</span></div>
+                                    <div class="tyre-spec"><span id="pressFL">--.-</span> PSI</div>
+                                </div>
+                                <div class="tyre-wrapper">
+                                    <div class="tyre-ui" id="tyreFR"><span>FR</span></div>
+                                    <div class="tyre-spec"><span id="pressFR">--.-</span> PSI</div>
+                                </div>
+                                <div class="tyre-wrapper">
+                                    <div class="tyre-ui" id="tyreRL"><span>RL</span></div>
+                                    <div class="tyre-spec"><span id="pressRL">--.-</span> PSI</div>
+                                </div>
+                                <div class="tyre-wrapper">
+                                    <div class="tyre-ui" id="tyreRR"><span>RR</span></div>
+                                    <div class="tyre-spec"><span id="pressRR">--.-</span> PSI</div>
+                                </div>
+                            </div>
+
+                            <div class="progress-bar-container">
+                                <div class="progress-text">Estado del Sensor: <span id="scanStatus">INACTIVO</span></div>
+                                <div class="progress-track"><div id="scanProgress" class="progress-bar"></div></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </nav>
+        </section>
+    </main>
+
+    <div id="modalInscripcion" class="overlay-f1 oculto-f1">
+        <div class="contenido-modal">
+            <div class="modal-header">
+                <h2>REGISTRO DE ESCUDERÍA</h2>
+                <button id="btnCerrarInscripcion" class="close-x">&times;</button>
+            </div>
+            <form id="formInscripcion" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label>Nombre del Piloto:</label>
+                    <input type="text" placeholder="Ej. Max Albon" required>
+                </div>
+                <div class="form-group">
+                    <label>Escudería:</label>
+                    <select>
+                        <option>Ferrari</option>
+                        <option>Red Bull Racing</option>
+                        <option>Mercedes-AMG</option>
+                        <option>Aston Martin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Costo de Súper Licencia:</label>
+                    <div class="precio-tag">150.00 EUR</div>
+                </div>
+                <button type="button" id="btnPagarPaypal" class="btn-paypal">
+                    Pagar Inscripción con <span>PayPal</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="pantallaMeta" class="overlay-meta oculto-meta">
+        <div class="contenido-meta">
+            <h2 class="titulo-victoria">🏁 ¡BANDERA A CUADROS! 🏁</h2>
+            <p>Prueba de motor completada con éxito desde la torre de control.</p>
+            <div class="pista-carreras">
+                <div class="linea-meta"></div>
+                <span id="cocheJuego" class="coche-pixel">🏎️🔥</span>
+            </div>
+            <button id="closeMetaBtn" class="btn btn-secondary">Regresar al Box</button>
+        </div>
+    </div>
+</body>
+</html>

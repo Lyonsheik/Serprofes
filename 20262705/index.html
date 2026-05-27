@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refugio Canino | Galería Interactiva</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js" defer></script>
+</head>
+<body>
+    <header class="portal-header">
+        <h1>🐾 Refugio Canino Virtual</h1>
+        <p>Descubre a nuestros peludos. Haz clic en cualquiera para ver sus detalles.</p>
+        <button id="btn-recargar">🔄 Cargar nuevos perritos</button>
+    </header>
+
+    <main>
+        <div id="loader" class="loader">Buscando perritos en la red... 🐕</div>
+        <div id="galeria-container" class="galeria-grid"></div>
+    </main>
+
+    <div id="modal-perro" class="modal oculto">
+        <div class="modal-contenido">
+            <span class="cerrar-modal">&times;</span>
+            <div class="modal-imagen-container">
+                <img id="modal-img" src="" alt="Perro en detalle">
+            </div>
+            <div class="modal-info">
+                <h2 id="modal-raza">Nombre de la Raza</h2>
+                <p><strong>Propósito:</strong> <span id="modal-proposito">...</span></p>
+                <p><strong>Temperamento:</strong> <span id="modal-temperamento">...</span></p>
+                <p><strong>Esperanza de vida:</strong> <span id="modal-vida">...</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

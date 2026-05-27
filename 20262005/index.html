@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-layer-group"></i> AdminPRO</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-target="panel-usuarios"><i class="fa-solid fa-users"></i> Usuarios</button>
+                <button class="nav-btn" data-target="panel-correo"><i class="fa-solid fa-envelope"></i> Gmail / Correo</button>
+                <button class="nav-btn" data-target="panel-chat"><i class="fa-solid fa-comments"></i> Chat Live</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div>
+                    <h1 id="header-title">Gestión de Usuarios</h1>
+                    <p id="header-desc">Administra suscripciones, roles y accesos.</p>
+                </div>
+            </header>
+
+            <section id="panel-usuarios" class="panel-section active">
+                <div class="grid-2-cols">
+                    <div class="card">
+                        <h2 id="form-title">Añadir Suscriptor</h2>
+                        <form id="suscripcionForm" class="formulario">
+                            <input type="hidden" id="editIndex" value="-1">
+                            <div class="input-group">
+                                <label for="nombreInput">Nombre completo</label>
+                                <input type="text" id="nombreInput" placeholder="Ej. Ada Lovelace" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="emailInput">Correo Electrónico</label>
+                                <input type="email" id="emailInput" placeholder="ada@ejemplo.com" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="rolInput">Rol</label>
+                                <select id="rolInput" required>
+                                    <option value="Usuario">Usuario</option>
+                                    <option value="Editor">Editor</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="btn-submit">Guardar Usuario</button>
+                                <button type="button" class="btn btn-secondary oculto" id="btn-cancel">Cancelar</button>
+                            </div>
+                        </form>
+                        <div id="mensajeExito" class="alerta oculto"></div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Base de Datos</h2>
+                        <div class="input-group search-group">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="buscadorUsuarios" placeholder="Buscar por nombre, email o rol...">
+                        </div>
+                        <div class="table-responsive">
+                            <table id="tablaUsuario" class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaCuerpo">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="panel-correo" class="panel-section">
+                <div class="card mail-card">
+                    <h2>Redactar Mensaje Nuevo</h2>
+                    <form id="mailForm">
+                        <div class="input-group">
+                            <label>Para:</label>
+                            <input type="email" id="mailTo" placeholder="usuario@gmail.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Asunto:</label>
+                            <input type="text" id="mailSubject" placeholder="Asunto del mensaje" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Mensaje:</label>
+                            <textarea id="mailBody" rows="6" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Enviar Correo</button>
+                    </form>
+                    <div id="mailAlerta" class="alerta oculto"></div>
+                </div>
+            </section>
+
+            <section id="panel-chat" class="panel-section">
+                <div class="card chat-card">
+                    <div class="chat-window" id="chatWindow">
+                        <div class="mensaje recibido">
+                            <span class="user">Sistema</span>
+                            <p>Bienvenido al chat global. ¿En qué podemos ayudarte?</p>
+                            <span class="time">10:00 AM</span>
+                        </div>
+                    </div>
+                    <form id="chatForm" class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>
